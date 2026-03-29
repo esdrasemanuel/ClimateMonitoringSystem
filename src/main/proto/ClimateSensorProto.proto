@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.esdras.climate";
+option java_outer_classname = "ClimateSensorProto";
+
+package climate;
+
+service ClimateSensorService {
+  rpc getCurrentClimateData(ClimateRequest) returns (ClimateResponse);
+  rpc streamLiveClimateData(ClimateRequest) returns (stream ClimateResponse);
+}
+
+message ClimateRequest {
+  string location = 1;
+  string stationId = 2;
+}
+
+message ClimateResponse {
+  double temperature = 1;
+  double humidity = 2;
+  double pressure = 3;
+  double windSpeed = 4;
+  string timestamp = 5;
+}
