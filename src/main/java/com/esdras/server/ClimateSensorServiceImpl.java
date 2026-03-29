@@ -36,13 +36,31 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
     public void streamLiveClimateData(ClimateRequest request, StreamObserver<ClimateResponse> responseObserver) {
         ServerCallStreamObserver<ClimateResponse> serverObserver =
             (ServerCallStreamObserver<ClimateResponse>) responseObserver;
+        // 
+        double temperature = -10 + 60 * random.nextDouble();
+        double humidity = 40 + random.nextDouble() * 50;
+        double pressure = 980 + random.nextDouble() * 40;
+        double windSpeed = 5 + random.nextDouble() * 50;
         try {
             while (!serverObserver.isCancelled()) {
+            
+                // small changes
+                temperature += (random.nextDouble() - 0.5) * 0.8; 
+                humidity += (random.nextDouble() - 0.5) * 2.0;      
+                pressure += (random.nextDouble() - 0.5) * 1.5;      
+                windSpeed += (random.nextDouble() - 0.5) * 2.0;     
+
+                // realistic limits
+                temperature = Math.max(10, Math.min(35, temperature));
+                humidity = Math.max(30, Math.min(100, humidity));
+                pressure = Math.max(970, Math.min(1040, pressure));
+                windSpeed = Math.max(0, Math.min(80, windSpeed));
+
                 ClimateResponse response = ClimateResponse.newBuilder()
-                        .setTemperature(-10 + 60 * random.nextDouble())
-                        .setHumidity(40 + random.nextDouble() * 50)
-                        .setPressure(980 + random.nextDouble() * 40)
-                        .setWindSpeed(5 + random.nextDouble() * 50)
+                        .setTemperature(temperature)
+                        .setHumidity(humidity)
+                        .setPressure(pressure)
+                        .setWindSpeed(windSpeed)
                         .setTimestamp(LocalDateTime.now().toString())
                         .build();
 
