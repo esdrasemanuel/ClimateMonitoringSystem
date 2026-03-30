@@ -65,15 +65,7 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
             @Override
             public void onCompleted() {
                 double averageRainfall = (count == 0) ? 0 : totalRainfall / count;
-
-                String floodRiskIndicator;
-                if (averageRainfall < 2.0) {
-                    floodRiskIndicator = "Low";
-                } else if (averageRainfall < 5.0) {
-                    floodRiskIndicator = "Medium";
-                } else {
-                    floodRiskIndicator = "High";
-                }
+                String floodRiskIndicator = determineFloodRisk(averageRainfall);
 
                 RainfallAnalysis analysis = RainfallAnalysis.newBuilder()
                     .setAverageRainfall(averageRainfall)
@@ -95,11 +87,11 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
 
         return new StreamObserver<RiverRequest>() {
 
-            double riverLevel = 3.8; // initial level
+            double riverLevel = 3.8; // initial level realisct for simulation
 
             @Override
             public void onNext(RiverRequest request) {
-                if (!serverObserver.isCancelled()) {
+                if (!serverObserver.isCancelled()) { // if client still on
 
                     // small realistic changes
                     riverLevel += (random.nextDouble() - 0.5) * 0.2;
@@ -113,7 +105,7 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
                             .setTimestamp(LocalDateTime.now().toString())
                             .build();
 
-                    responseObserver.onNext(response);
+                    responseObserver.onNext(response); // send response
                 }
             }
 
@@ -140,4 +132,16 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
             return "High";
         }
     }
+    
+    // method to determine the risks of flood:
+    private String determineFloodRisk(double averageRainfall) {
+        if (averageRainfall < 2.0) {
+            return "Low";
+        } else if (averageRainfall < 5.0) {
+            return "Medium";
+        } else {
+            return "High";
+        }
+    }
+    
 }
