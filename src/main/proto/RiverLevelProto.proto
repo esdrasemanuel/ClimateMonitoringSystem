@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.esdras.river";
+option java_outer_classname = "RiverLevelProto";
+
+package river;
+
+
+service RiverLevelService {
+
+  // 1. Simple RPC
+  rpc getCurrentRiverLevel(RiverRequest) returns (RiverResponse);
+
+  // 2. Client Streaming RPC
+  rpc uploadRainfallData(stream RainfallData) returns (RainfallAnalysis);
+
+  // 3. Bidirectional Streaming RPC
+  rpc monitorRiverLevelLive(stream RiverRequest) returns (stream RiverResponse);
+}
+
+message RiverRequest {
+  string location = 1;
+  string sensorId = 2;
+}
+
+message RiverResponse {
+  double riverLevel = 1;
+  string riskStatus = 2;
+  string timestamp = 3;
+}
+
+message RainfallData {
+  string location = 1;
+  double rainfallAmount = 2; 
+  string timestamp = 3;
+}
+
+message RainfallAnalysis {
+  double averageRainfall = 1;
+  string floodRiskIndicator = 2;
+}

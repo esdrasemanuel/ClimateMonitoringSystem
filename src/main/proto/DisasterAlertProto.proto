@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.esdras.alert";
+option java_outer_classname = "DisasterAlertProto";
+
+package alert;
+
+service DisasterAlertService {
+
+  // 1. Simple RPC
+  rpc generateStormAlert(AlertRequest) returns (AlertResponse);
+
+  // 2. Server Streaming RPC
+  rpc streamActiveAlerts(AlertStreamRequest) returns (stream AlertResponse);
+}
+
+message AlertRequest {
+  string location = 1;
+  double temperature = 2;
+  double humidity = 3;
+  double windSpeed = 4;
+  double pressure = 5;
+  string timestamp = 6;
+
+}
+
+message AlertStreamRequest {
+  string location = 1;
+}
+
+
+message AlertResponse {
+  string alertType = 1;
+  string severityLevel = 2;
+  string message = 3;
+  string timestamp = 4;
+}
