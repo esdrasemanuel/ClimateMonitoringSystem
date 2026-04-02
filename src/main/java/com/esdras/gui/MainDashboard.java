@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.esdras.gui;
-
+import javax.swing.*;
+import java.awt.*;
 /**
  *
  * @author EMoreira
@@ -16,7 +17,27 @@ public class MainDashboard extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public MainDashboard() {
-        initComponents();
+        setTitle("Smart Environment Monitoring Dashboard");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // centralize window
+
+        setLayout(new BorderLayout(10, 10));
+
+        // title
+        JLabel titleLabel = new JLabel("Smart Environment Monitoring Dashboard", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        add(titleLabel, BorderLayout.NORTH);
+
+        //(Climate + River)
+        JPanel topPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        topPanel.add(new ClimatePanel());
+        topPanel.add(new RiverPanel());
+
+        add(topPanel, BorderLayout.CENTER);
+
+        //(Alerts)
+        add(new AlertPanel(), BorderLayout.SOUTH);
     }
 
     /**
@@ -28,28 +49,17 @@ public class MainDashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText(" SMART ENVIRONMENTAL MONITORING DASHBOARD ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(jLabel1)
-                .addContainerGap(29, Short.MAX_VALUE))
+            .addGap(0, 526, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addContainerGap(278, Short.MAX_VALUE))
+            .addGap(0, 309, Short.MAX_VALUE)
         );
 
         pack();
@@ -81,6 +91,5 @@ public class MainDashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

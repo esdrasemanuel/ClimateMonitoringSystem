@@ -20,11 +20,41 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
 
     @Override
     public void getCurrentClimateData(ClimateRequest request, StreamObserver<ClimateResponse> responseObserver) {
+        
+        String location = request.getLocation();
+        String stationId = request.getStationId();
+        
+        double baseTemperature = 0.0;
+        double baseHumidity = 0.0;
+        double basePressure = 0.0;
+        double baseWindSpeed = 0.0;
+        
+        if(location.equalsIgnoreCase("Dublin")){
+            if (stationId.equalsIgnoreCase("DUB-ST02")) {
+                baseTemperature = 13.5;
+                baseHumidity = 74.0;
+                basePressure = 1010.0;
+                baseWindSpeed = 15.0;
+            }else if (stationId.equalsIgnoreCase("DUB-ST02")){
+                baseTemperature = 13.0;
+                baseHumidity = 74.5;
+                basePressure = 1010.8;
+                baseWindSpeed = 14.6;
+            }
+        }else if (location.equalsIgnoreCase("Bray")) {
+            if (stationId.equalsIgnoreCase("BRY-ST01")) {
+                baseTemperature = 11.0;
+                baseHumidity = 82.0;
+                basePressure = 1006.0;
+                baseWindSpeed = 22.0;
+            }
+        }
+        
         ClimateResponse response = ClimateResponse.newBuilder()
-                .setTemperature(-10 + 60 * random.nextDouble()) // -10 a 50 °C
-                .setHumidity(40 + random.nextDouble() * 50)
-                .setPressure(980 + random.nextDouble() * 40)
-                .setWindSpeed(5 + random.nextDouble() * 50)
+                .setTemperature(baseTemperature + (-1 + random.nextDouble() * 2))   // ±1°C
+                .setHumidity(baseHumidity + (-3 + random.nextDouble() * 6))         // ±3%
+                .setPressure(basePressure + (-2 + random.nextDouble() * 4))         // ±2 hPa
+                .setWindSpeed(baseWindSpeed + (-2 + random.nextDouble() * 4))       // ±2 km/h
                 .setTimestamp(LocalDateTime.now().toString())
                 .build();
 
