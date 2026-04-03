@@ -20,7 +20,7 @@ public class DisasterAlertClient {
 
     public DisasterAlertClient() {
         channel = ManagedChannelBuilder
-                .forAddress("localhost", 50053)
+                .forAddress("localhost", 50051)
                 .usePlaintext()
                 .build();
 

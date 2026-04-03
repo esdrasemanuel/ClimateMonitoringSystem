@@ -62,6 +62,7 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
         responseObserver.onCompleted();
     }
 
+    //Server streaming
     @Override
     public void streamLiveClimateData(ClimateRequest request, StreamObserver<ClimateResponse> responseObserver) {
         ServerCallStreamObserver<ClimateResponse> serverObserver =

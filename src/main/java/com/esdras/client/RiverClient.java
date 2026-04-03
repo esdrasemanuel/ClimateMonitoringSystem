@@ -7,7 +7,10 @@ import com.esdras.river.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
@@ -22,7 +25,7 @@ public class RiverClient {
 
     public RiverClient() {
         channel = ManagedChannelBuilder
-                .forAddress("localhost", 50052)
+                .forAddress("localhost", 50051)
                 .usePlaintext()
                 .build();
 
@@ -41,18 +44,26 @@ public class RiverClient {
     }
 
     // 2. Client streaming RPC
-    public void uploadRainfallData(List<RainfallData> rainfallList,
+    public void uploadRainfallData(String location, int days,
                                    StreamObserver<RainfallAnalysis> responseObserver) {
 
         StreamObserver<RainfallData> requestObserver = asyncStub.uploadRainfallData(responseObserver);
 
-        for (RainfallData rainfallData : rainfallList) {
-            requestObserver.onNext(rainfallData);
+        Random rand = new Random();
+
+        for (int i = 0; i < days; i++) {
+            double chuva = 5 + rand.nextDouble() * 20; // 5 to 25 mm
+            RainfallData data = RainfallData.newBuilder()
+                    .setLocation(location) 
+                    .setRainfallAmount(chuva)
+                    .setTimestamp(Instant.now().toString())
+                    .build();
+            requestObserver.onNext(data);
         }
 
         requestObserver.onCompleted();
     }
-
+    
     // 3.Bidirectional streaming RPC
     public void monitorRiverLevelLive(String location, String sensorId, int times,
                                       StreamObserver<RiverResponse> responseObserver) {
