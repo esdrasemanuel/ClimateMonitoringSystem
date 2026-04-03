@@ -6,13 +6,16 @@ package com.esdras.gui;
 
 import com.esdras.client.ClimateClient;
 import com.esdras.climate.ClimateResponse;
-
+import io.grpc.stub.StreamObserver;
+import javax.swing.SwingUtilities;
+import jdk.internal.org.jline.terminal.TerminalBuilder;
 /**
  *
  * @author EMoreira
  */
 public class ClimatePanel extends javax.swing.JPanel {
-
+    private ClimateClient climateClient;
+    private boolean streaming = false;
     /**
      * Creates new form ClimatePanel
      */
@@ -20,6 +23,15 @@ public class ClimatePanel extends javax.swing.JPanel {
         initComponents();
         
         cbLocationActionPerformed(null);
+        climateClient = new ClimateClient();
+
+        jTextField1.setEditable(false);
+        jTextField2.setEditable(false);
+        jTextField3.setEditable(false);
+        jTextField4.setEditable(false);
+        jTextField5.setEditable(false);
+        
+        jButton3.setVisible(false);
     }
 
     /**
@@ -67,9 +79,19 @@ public class ClimatePanel extends javax.swing.JPanel {
 
         jButton2.setBackground(new java.awt.Color(102, 255, 0));
         jButton2.setLabel("Start Live Stream");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(255, 51, 0));
         jButton3.setLabel("Stop Stream");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         cbStation.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -196,6 +218,20 @@ public class ClimatePanel extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        try {
+               String location = cbLocation.getSelectedItem().toString();
+               String stationId = cbStation.getSelectedItem().toString();
+
+               ClimateResponse response = climateClient.getCurrentClimateData(location, stationId);
+
+               updateClimateFields(response);
+
+           } catch (Exception e) {
+               javax.swing.JOptionPane.showMessageDialog(this,
+                       "Error connecting to Climate Service:\n" + e.getMessage(),
+                       "Connection Error",
+                       javax.swing.JOptionPane.ERROR_MESSAGE);
+           }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
@@ -220,6 +256,80 @@ public class ClimatePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_cbLocationActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here
+         if (streaming) {
+        return;
+    }
+
+    streaming = true;
+
+    jButton2.setEnabled(false);
+    jButton3.setVisible(true);
+    jButton1.setEnabled(false);
+
+    String location = cbLocation.getSelectedItem().toString();
+    String stationId = cbStation.getSelectedItem().toString();
+
+    climateClient.streamLiveClimateData(location, stationId, new StreamObserver<ClimateResponse>() {
+
+        @Override
+        public void onNext(ClimateResponse response) {
+            SwingUtilities.invokeLater(() -> {
+                updateClimateFields(response);
+            });
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            streaming = false;
+            
+            boolean wasCancelledByUser = t instanceof io.grpc.StatusRuntimeException
+                        && ((io.grpc.StatusRuntimeException) t).getStatus().getCode()
+                           == io.grpc.Status.Code.CANCELLED;
+            
+            SwingUtilities.invokeLater(() -> {
+                jButton2.setEnabled(true);
+                jButton3.setVisible(false);
+                jButton1.setEnabled(true);
+                if (!wasCancelledByUser) {
+                    javax.swing.JOptionPane.showMessageDialog(ClimatePanel.this,
+                            "Streaming error:\n" + t.getMessage(),
+                            "Stream Error",
+                            javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+            });  
+        }
+
+        @Override
+        public void onCompleted() {
+            streaming = false;
+
+            SwingUtilities.invokeLater(() -> {
+                jButton2.setEnabled(true);
+                jButton3.setVisible(false);
+                jButton1.setEnabled(true);
+            });
+        }
+    });
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here: 
+        climateClient.cancelStream(); // stopping the while loop cleanly.
+        streaming = false;
+        jButton2.setEnabled(true);
+        jButton3.setVisible(false);
+        jButton1.setEnabled(true);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void updateClimateFields(ClimateResponse response) {
+        jTextField1.setText(String.format("%.2f °C", response.getTemperature()));
+        jTextField2.setText(String.format("%.2f %%", response.getHumidity()));
+        jTextField3.setText(String.format("%.2f hPa", response.getPressure()));
+        jTextField4.setText(String.format("%.2f km/h", response.getWindSpeed()));
+        jTextField5.setText(response.getTimestamp());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbLocation;

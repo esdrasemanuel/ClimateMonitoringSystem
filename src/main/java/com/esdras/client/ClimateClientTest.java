@@ -29,22 +29,22 @@ public class ClimateClientTest {
         // TEST 2 - Streaming RPC
         System.out.println("\n [LIVE CLIMATE STREAM]");
 
-        Iterator<ClimateResponse> stream = client.streamLiveClimateData("Dublin", "Station-01");
+        //Iterator<ClimateResponse> stream = client.streamLiveClimateData("Dublin", "Station-01");
 
         int count = 0;
         // test stream 5 times
-        while (stream.hasNext() && count < 5) {
-            ClimateResponse streamResponse = stream.next();
-
-            System.out.println("---- Reading " + (count + 1) + " ----");
-            System.out.println("Temperature: " + streamResponse.getTemperature());
-            System.out.println("Humidity: " + streamResponse.getHumidity());
-            System.out.println("Pressure: " + streamResponse.getPressure());
-            System.out.println("Wind Speed: " + streamResponse.getWindSpeed());
-            System.out.println("Timestamp: " + streamResponse.getTimestamp());
-
-            count++;
-        }
+//        while (stream.hasNext() && count < 5) {
+//            ClimateResponse streamResponse = stream.next();
+//
+//            System.out.println("---- Reading " + (count + 1) + " ----");
+//            System.out.println("Temperature: " + streamResponse.getTemperature());
+//            System.out.println("Humidity: " + streamResponse.getHumidity());
+//            System.out.println("Pressure: " + streamResponse.getPressure());
+//            System.out.println("Wind Speed: " + streamResponse.getWindSpeed());
+//            System.out.println("Timestamp: " + streamResponse.getTimestamp());
+//
+//            count++;
+//        }
 
         client.shutdown();
     }

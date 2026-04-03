@@ -30,7 +30,7 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
         double baseWindSpeed = 0.0;
         
         if(location.equalsIgnoreCase("Dublin")){
-            if (stationId.equalsIgnoreCase("DUB-ST02")) {
+            if (stationId.equalsIgnoreCase("DUB-ST01")) {
                 baseTemperature = 13.5;
                 baseHumidity = 74.0;
                 basePressure = 1010.0;
@@ -66,39 +66,63 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
     public void streamLiveClimateData(ClimateRequest request, StreamObserver<ClimateResponse> responseObserver) {
         ServerCallStreamObserver<ClimateResponse> serverObserver =
             (ServerCallStreamObserver<ClimateResponse>) responseObserver;
-        // 
-        double temperature = -10 + 60 * random.nextDouble();
-        double humidity = 40 + random.nextDouble() * 50;
-        double pressure = 980 + random.nextDouble() * 40;
-        double windSpeed = 5 + random.nextDouble() * 50;
+        String location = request.getLocation();
+        String stationId = request.getStationId();
+
+        double baseTemperature = 0.0;
+        double baseHumidity = 0.0;
+        double basePressure = 0.0;
+        double baseWindSpeed = 0.0;
+        
+        if(location.equalsIgnoreCase("Dublin")){
+            if (stationId.equalsIgnoreCase("DUB-ST01")) {
+                baseTemperature = 13.5;
+                baseHumidity = 74.0;
+                basePressure = 1010.0;
+                baseWindSpeed = 15.0;
+            }else if (stationId.equalsIgnoreCase("DUB-ST02")){
+                baseTemperature = 13.0;
+                baseHumidity = 74.5;
+                basePressure = 1010.8;
+                baseWindSpeed = 14.6;
+            }
+        }else if (location.equalsIgnoreCase("Bray")) {
+            if (stationId.equalsIgnoreCase("BRY-ST01")) {
+                baseTemperature = 11.0;
+                baseHumidity = 82.0;
+                basePressure = 1006.0;
+                baseWindSpeed = 22.0;
+            }
+        }
         try {
             while (!serverObserver.isCancelled()) {
-            
+           
                 // small changes
-                temperature += (random.nextDouble() - 0.5) * 0.8; 
-                humidity += (random.nextDouble() - 0.5) * 2.0;      
-                pressure += (random.nextDouble() - 0.5) * 1.5;      
-                windSpeed += (random.nextDouble() - 0.5) * 2.0;     
+                baseTemperature += (random.nextDouble() - 0.5) * 0.6; // ±0.3
+                baseHumidity += (random.nextDouble() - 0.5) * 1.5;    // ±0.75
+                basePressure += (random.nextDouble() - 0.5) * 1.0;    // ±0.5
+                baseWindSpeed += (random.nextDouble() - 0.5) * 1.5;   // ±0.75
 
                 // realistic limits
-                temperature = Math.max(10, Math.min(35, temperature));
-                humidity = Math.max(30, Math.min(100, humidity));
-                pressure = Math.max(970, Math.min(1040, pressure));
-                windSpeed = Math.max(0, Math.min(80, windSpeed));
+                baseTemperature = Math.max(5, Math.min(25, baseTemperature));
+                baseHumidity = Math.max(50, Math.min(100, baseHumidity));
+                basePressure = Math.max(990, Math.min(1025, basePressure));
+                baseWindSpeed = Math.max(0, Math.min(40, baseWindSpeed));
 
                 ClimateResponse response = ClimateResponse.newBuilder()
-                        .setTemperature(temperature)
-                        .setHumidity(humidity)
-                        .setPressure(pressure)
-                        .setWindSpeed(windSpeed)
+                        .setTemperature(baseTemperature)
+                        .setHumidity(baseHumidity)
+                        .setPressure(basePressure)
+                        .setWindSpeed(baseWindSpeed)
                         .setTimestamp(LocalDateTime.now().toString())
                         .build();
 
                 responseObserver.onNext(response);
+
                 Thread.sleep(2000);
-                
-                 System.out.println("Client disconnected.");
             }
+            System.out.println("Client disconnected.");
+
         } catch (InterruptedException e) {
             System.out.println("Error: " + e.getMessage());
         }
