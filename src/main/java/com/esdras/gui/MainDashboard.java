@@ -30,14 +30,21 @@ public class MainDashboard extends javax.swing.JFrame {
         add(titleLabel, BorderLayout.NORTH);
 
         //(Climate + River)
+        ClimatePanel climatePanel = new ClimatePanel();
+        RiverPanel riverPanel = new RiverPanel();
+        AlertPanel alertPanel = new AlertPanel(climatePanel, riverPanel);
+        climatePanel.setAlertPanel(alertPanel);
+        riverPanel.setAlertPanel(alertPanel);
+
         JPanel topPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        topPanel.add(new ClimatePanel());
-        topPanel.add(new RiverPanel());
+        topPanel.add(climatePanel);
+        topPanel.add(riverPanel);
 
         add(topPanel, BorderLayout.CENTER);
-
+        
         //(Alerts)
-        add(new AlertPanel(), BorderLayout.SOUTH);
+        add(alertPanel, BorderLayout.SOUTH);
+
     }
 
     /**

@@ -16,12 +16,11 @@ service RiverLevelService {
   rpc uploadRainfallData(stream RainfallData) returns (RainfallAnalysis);
 
   // 3. Bidirectional Streaming RPC
-  rpc monitorRiverLevelLive(stream RiverRequest) returns (stream RiverResponse);
+  rpc monitorRiverLevelLive(stream RiverRequestBidi) returns (stream RiverResponse);
 }
 
 message RiverRequest {
   string location = 1;
-  string sensorId = 2;
 }
 
 message RiverResponse {
@@ -33,10 +32,14 @@ message RiverResponse {
 message RainfallData {
   string location = 1;
   double rainfallAmount = 2; 
-  string timestamp = 3;
 }
 
 message RainfallAnalysis {
   double averageRainfall = 1;
   string floodRiskIndicator = 2;
+}
+
+message RiverRequestBidi {
+  string location = 1;
+  double riverLevel = 2;
 }

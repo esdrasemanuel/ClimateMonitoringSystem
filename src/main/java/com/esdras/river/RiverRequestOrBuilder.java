@@ -16,14 +16,4 @@ public interface RiverRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getLocationBytes();
-
-  /**
-   * <code>string sensorId = 2;</code>
-   */
-  java.lang.String getSensorId();
-  /**
-   * <code>string sensorId = 2;</code>
-   */
-  com.google.protobuf.ByteString
-      getSensorIdBytes();
 }

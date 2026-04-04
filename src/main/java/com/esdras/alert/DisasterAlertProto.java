@@ -20,15 +20,15 @@ public final class DisasterAlertProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_alert_AlertRequest_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_alert_AlertStreamRequest_descriptor;
-  static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_alert_AlertStreamRequest_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_alert_AlertResponse_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_alert_AlertResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_alert_LiveAlertRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_alert_LiveAlertRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -42,15 +42,18 @@ public final class DisasterAlertProto {
       "rtRequest\022\020\n\010location\030\001 \001(\t\022\023\n\013temperatu" +
       "re\030\002 \001(\001\022\020\n\010humidity\030\003 \001(\001\022\021\n\twindSpeed\030" +
       "\004 \001(\001\022\020\n\010pressure\030\005 \001(\001\022\021\n\ttimestamp\030\006 \001" +
-      "(\t\"&\n\022AlertStreamRequest\022\020\n\010location\030\001 \001" +
       "(\t\"]\n\rAlertResponse\022\021\n\talertType\030\001 \001(\t\022\025" +
       "\n\rseverityLevel\030\002 \001(\t\022\017\n\007message\030\003 \001(\t\022\021" +
-      "\n\ttimestamp\030\004 \001(\t2\240\001\n\024DisasterAlertServi" +
-      "ce\022?\n\022generateStormAlert\022\023.alert.AlertRe" +
-      "quest\032\024.alert.AlertResponse\022G\n\022streamAct" +
-      "iveAlerts\022\031.alert.AlertStreamRequest\032\024.a" +
-      "lert.AlertResponse0\001B(\n\020com.esdras.alert" +
-      "B\022DisasterAlertProtoP\001b\006proto3"
+      "\n\ttimestamp\030\004 \001(\t\"\205\001\n\020LiveAlertRequest\022\023" +
+      "\n\013temperature\030\001 \001(\001\022\020\n\010humidity\030\002 \001(\001\022\021\n" +
+      "\twindSpeed\030\003 \001(\001\022\020\n\010pressure\030\004 \001(\001\022\022\n\nri" +
+      "verLevel\030\005 \001(\001\022\021\n\ttimestamp\030\006 \001(\t2\236\001\n\024Di" +
+      "sasterAlertService\022?\n\022generateStormAlert" +
+      "\022\023.alert.AlertRequest\032\024.alert.AlertRespo" +
+      "nse\022E\n\020streamLiveAlerts\022\027.alert.LiveAler" +
+      "tRequest\032\024.alert.AlertResponse(\0010\001B(\n\020co" +
+      "m.esdras.alertB\022DisasterAlertProtoP\001b\006pr" +
+      "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -70,18 +73,18 @@ public final class DisasterAlertProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_alert_AlertRequest_descriptor,
         new java.lang.String[] { "Location", "Temperature", "Humidity", "WindSpeed", "Pressure", "Timestamp", });
-    internal_static_alert_AlertStreamRequest_descriptor =
-      getDescriptor().getMessageTypes().get(1);
-    internal_static_alert_AlertStreamRequest_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_alert_AlertStreamRequest_descriptor,
-        new java.lang.String[] { "Location", });
     internal_static_alert_AlertResponse_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(1);
     internal_static_alert_AlertResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_alert_AlertResponse_descriptor,
         new java.lang.String[] { "AlertType", "SeverityLevel", "Message", "Timestamp", });
+    internal_static_alert_LiveAlertRequest_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_alert_LiveAlertRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_alert_LiveAlertRequest_descriptor,
+        new java.lang.String[] { "Temperature", "Humidity", "WindSpeed", "Pressure", "RiverLevel", "Timestamp", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

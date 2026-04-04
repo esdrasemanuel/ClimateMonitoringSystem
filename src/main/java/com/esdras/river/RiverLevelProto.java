@@ -34,6 +34,11 @@ public final class RiverLevelProto {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_river_RainfallAnalysis_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_river_RiverRequestBidi_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_river_RiverRequestBidi_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -43,21 +48,22 @@ public final class RiverLevelProto {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\025RiverLevelProto.proto\022\005river\"2\n\014RiverR" +
-      "equest\022\020\n\010location\030\001 \001(\t\022\020\n\010sensorId\030\002 \001" +
-      "(\t\"J\n\rRiverResponse\022\022\n\nriverLevel\030\001 \001(\001\022" +
-      "\022\n\nriskStatus\030\002 \001(\t\022\021\n\ttimestamp\030\003 \001(\t\"K" +
-      "\n\014RainfallData\022\020\n\010location\030\001 \001(\t\022\026\n\016rain" +
-      "fallAmount\030\002 \001(\001\022\021\n\ttimestamp\030\003 \001(\t\"G\n\020R" +
-      "ainfallAnalysis\022\027\n\017averageRainfall\030\001 \001(\001" +
-      "\022\032\n\022floodRiskIndicator\030\002 \001(\t2\344\001\n\021RiverLe" +
-      "velService\022A\n\024getCurrentRiverLevel\022\023.riv" +
-      "er.RiverRequest\032\024.river.RiverResponse\022D\n" +
-      "\022uploadRainfallData\022\023.river.RainfallData" +
-      "\032\027.river.RainfallAnalysis(\001\022F\n\025monitorRi" +
-      "verLevelLive\022\023.river.RiverRequest\032\024.rive" +
-      "r.RiverResponse(\0010\001B%\n\020com.esdras.riverB" +
-      "\017RiverLevelProtoP\001b\006proto3"
+      "\n\025RiverLevelProto.proto\022\005river\" \n\014RiverR" +
+      "equest\022\020\n\010location\030\001 \001(\t\"J\n\rRiverRespons" +
+      "e\022\022\n\nriverLevel\030\001 \001(\001\022\022\n\nriskStatus\030\002 \001(" +
+      "\t\022\021\n\ttimestamp\030\003 \001(\t\"8\n\014RainfallData\022\020\n\010" +
+      "location\030\001 \001(\t\022\026\n\016rainfallAmount\030\002 \001(\001\"G" +
+      "\n\020RainfallAnalysis\022\027\n\017averageRainfall\030\001 " +
+      "\001(\001\022\032\n\022floodRiskIndicator\030\002 \001(\t\"8\n\020River" +
+      "RequestBidi\022\020\n\010location\030\001 \001(\t\022\022\n\nriverLe" +
+      "vel\030\002 \001(\0012\350\001\n\021RiverLevelService\022A\n\024getCu" +
+      "rrentRiverLevel\022\023.river.RiverRequest\032\024.r" +
+      "iver.RiverResponse\022D\n\022uploadRainfallData" +
+      "\022\023.river.RainfallData\032\027.river.RainfallAn" +
+      "alysis(\001\022J\n\025monitorRiverLevelLive\022\027.rive" +
+      "r.RiverRequestBidi\032\024.river.RiverResponse" +
+      "(\0010\001B%\n\020com.esdras.riverB\017RiverLevelProt" +
+      "oP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -76,7 +82,7 @@ public final class RiverLevelProto {
     internal_static_river_RiverRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_river_RiverRequest_descriptor,
-        new java.lang.String[] { "Location", "SensorId", });
+        new java.lang.String[] { "Location", });
     internal_static_river_RiverResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_river_RiverResponse_fieldAccessorTable = new
@@ -88,13 +94,19 @@ public final class RiverLevelProto {
     internal_static_river_RainfallData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_river_RainfallData_descriptor,
-        new java.lang.String[] { "Location", "RainfallAmount", "Timestamp", });
+        new java.lang.String[] { "Location", "RainfallAmount", });
     internal_static_river_RainfallAnalysis_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_river_RainfallAnalysis_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_river_RainfallAnalysis_descriptor,
         new java.lang.String[] { "AverageRainfall", "FloodRiskIndicator", });
+    internal_static_river_RiverRequestBidi_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_river_RiverRequestBidi_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_river_RiverRequestBidi_descriptor,
+        new java.lang.String[] { "Location", "RiverLevel", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

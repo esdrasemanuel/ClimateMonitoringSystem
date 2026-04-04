@@ -7,10 +7,8 @@ import com.esdras.river.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+import javax.swing.Timer;
 
 /**
  *
@@ -22,6 +20,8 @@ public class RiverClient {
     private final ManagedChannel channel;
     private final RiverLevelServiceGrpc.RiverLevelServiceBlockingStub blockingStub;
     private final RiverLevelServiceGrpc.RiverLevelServiceStub asyncStub;
+    private StreamObserver<RiverRequestBidi> liveStreamObserver;
+    private Timer timer;
 
     public RiverClient() {
         channel = ManagedChannelBuilder
@@ -34,10 +34,9 @@ public class RiverClient {
     }
 
     // 1. Simple RPC
-    public RiverResponse getCurrentRiverLevel(String location, String sensorId) {
+    public RiverResponse getCurrentRiverLevel(String location) {
         RiverRequest request = RiverRequest.newBuilder()
                 .setLocation(location)
-                .setSensorId(sensorId)
                 .build();
 
         return blockingStub.getCurrentRiverLevel(request);
@@ -56,7 +55,6 @@ public class RiverClient {
             RainfallData data = RainfallData.newBuilder()
                     .setLocation(location) 
                     .setRainfallAmount(chuva)
-                    .setTimestamp(Instant.now().toString())
                     .build();
             requestObserver.onNext(data);
         }
@@ -65,27 +63,24 @@ public class RiverClient {
     }
     
     // 3.Bidirectional streaming RPC
-    public void monitorRiverLevelLive(String location, String sensorId, int times,
-                                      StreamObserver<RiverResponse> responseObserver) {
-        // open the bidirectional stream
-        StreamObserver<RiverRequest> requestObserver = asyncStub.monitorRiverLevelLive(responseObserver);
+    public void startLiveMonitoring(String location, StreamObserver<RiverResponse> responseObserver) {
+        liveStreamObserver = asyncStub.monitorRiverLevelLive(responseObserver);
 
-        try {
-            for (int i = 0; i < times; i++) {
-                RiverRequest request = RiverRequest.newBuilder()
+        timer = new Timer(2000, e -> { //  2 sec
+            double simulatedLevel = 2.0 + new Random().nextDouble() * 3.0; // simulates 2.0 to 5.0 metres
+            RiverRequestBidi request = RiverRequestBidi.newBuilder()
                     .setLocation(location)
-                    .setSensorId(sensorId)
-                    .build(); // build request
+                    .setRiverLevel(simulatedLevel)
+                    .build();
+            liveStreamObserver.onNext(request);
+        });
 
-                requestObserver.onNext(request);
-                Thread.sleep(2000); // time of sensor reading every (2 seconds
-            }
+        timer.start();
+    }
 
-            requestObserver.onCompleted();
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void stopLiveMonitoring() {
+        if (timer != null) timer.stop();
+        if (liveStreamObserver != null) liveStreamObserver.onCompleted();
     }
 
     public void shutdown() {

@@ -17,7 +17,9 @@ public class DisasterAlertClient {
     private final ManagedChannel channel;
     private final DisasterAlertServiceGrpc.DisasterAlertServiceBlockingStub blockingStub;
     private final DisasterAlertServiceGrpc.DisasterAlertServiceStub asyncStub;
-
+    
+    private StreamObserver<LiveAlertRequest> liveAlertObserver;
+    
     public DisasterAlertClient() {
         channel = ManagedChannelBuilder
                 .forAddress("localhost", 50051)
@@ -42,15 +44,45 @@ public class DisasterAlertClient {
 
         return blockingStub.generateStormAlert(request);
     }
-
-    public void streamActiveAlerts(String location, StreamObserver<AlertResponse> responseObserver) {
-
-        AlertStreamRequest request = AlertStreamRequest.newBuilder()
-                .setLocation(location)
-                .build();
-
-        asyncStub.streamActiveAlerts(request, responseObserver);
+    
+    // Start bidi
+    public void startLiveAlertFeed(StreamObserver<AlertResponse> responseObserver) {
+        liveAlertObserver = asyncStub.streamLiveAlerts(responseObserver);
     }
+
+    // Send live combined data
+    public void sendLiveAlertData(double temperature, double humidity,
+                                  double windSpeed, double pressure, double riverLevel, String timestamp) {
+
+        if (liveAlertObserver != null) {
+            LiveAlertRequest request = LiveAlertRequest.newBuilder()
+                    .setTemperature(temperature)
+                    .setHumidity(humidity)
+                    .setWindSpeed(windSpeed)
+                    .setPressure(pressure)
+                    .setRiverLevel(riverLevel)
+                    .setTimestamp(timestamp)
+                    .build();
+
+            liveAlertObserver.onNext(request);
+        }
+    }
+
+    // Stop bidi
+    public void stopLiveAlertFeed() {
+        if (liveAlertObserver != null) {
+            liveAlertObserver.onCompleted();
+        }
+    }
+
+//    public void streamActiveAlerts(String location, StreamObserver<AlertResponse> responseObserver) {
+//
+//        AlertStreamRequest request = AlertStreamRequest.newBuilder()
+//                .setLocation(location)
+//                .build();
+//
+//        asyncStub.streamActiveAlerts(request, responseObserver);
+//    }
 
     public void shutdown() {
         channel.shutdown();

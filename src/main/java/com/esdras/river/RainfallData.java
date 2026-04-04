@@ -18,7 +18,6 @@ private static final long serialVersionUID = 0L;
   private RainfallData() {
     location_ = "";
     rainfallAmount_ = 0D;
-    timestamp_ = "";
   }
 
   @java.lang.Override
@@ -54,12 +53,6 @@ private static final long serialVersionUID = 0L;
           case 17: {
 
             rainfallAmount_ = input.readDouble();
-            break;
-          }
-          case 26: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            timestamp_ = s;
             break;
           }
           default: {
@@ -137,40 +130,6 @@ private static final long serialVersionUID = 0L;
     return rainfallAmount_;
   }
 
-  public static final int TIMESTAMP_FIELD_NUMBER = 3;
-  private volatile java.lang.Object timestamp_;
-  /**
-   * <code>string timestamp = 3;</code>
-   */
-  public java.lang.String getTimestamp() {
-    java.lang.Object ref = timestamp_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      timestamp_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string timestamp = 3;</code>
-   */
-  public com.google.protobuf.ByteString
-      getTimestampBytes() {
-    java.lang.Object ref = timestamp_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      timestamp_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -191,9 +150,6 @@ private static final long serialVersionUID = 0L;
     if (rainfallAmount_ != 0D) {
       output.writeDouble(2, rainfallAmount_);
     }
-    if (!getTimestampBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, timestamp_);
-    }
     unknownFields.writeTo(output);
   }
 
@@ -209,9 +165,6 @@ private static final long serialVersionUID = 0L;
     if (rainfallAmount_ != 0D) {
       size += com.google.protobuf.CodedOutputStream
         .computeDoubleSize(2, rainfallAmount_);
-    }
-    if (!getTimestampBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, timestamp_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -235,8 +188,6 @@ private static final long serialVersionUID = 0L;
         java.lang.Double.doubleToLongBits(getRainfallAmount())
         == java.lang.Double.doubleToLongBits(
             other.getRainfallAmount()));
-    result = result && getTimestamp()
-        .equals(other.getTimestamp());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -253,8 +204,6 @@ private static final long serialVersionUID = 0L;
     hash = (37 * hash) + RAINFALLAMOUNT_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
         java.lang.Double.doubleToLongBits(getRainfallAmount()));
-    hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
-    hash = (53 * hash) + getTimestamp().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -392,8 +341,6 @@ private static final long serialVersionUID = 0L;
 
       rainfallAmount_ = 0D;
 
-      timestamp_ = "";
-
       return this;
     }
 
@@ -422,7 +369,6 @@ private static final long serialVersionUID = 0L;
       com.esdras.river.RainfallData result = new com.esdras.river.RainfallData(this);
       result.location_ = location_;
       result.rainfallAmount_ = rainfallAmount_;
-      result.timestamp_ = timestamp_;
       onBuilt();
       return result;
     }
@@ -477,10 +423,6 @@ private static final long serialVersionUID = 0L;
       }
       if (other.getRainfallAmount() != 0D) {
         setRainfallAmount(other.getRainfallAmount());
-      }
-      if (!other.getTimestamp().isEmpty()) {
-        timestamp_ = other.timestamp_;
-        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -602,75 +544,6 @@ private static final long serialVersionUID = 0L;
     public Builder clearRainfallAmount() {
       
       rainfallAmount_ = 0D;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object timestamp_ = "";
-    /**
-     * <code>string timestamp = 3;</code>
-     */
-    public java.lang.String getTimestamp() {
-      java.lang.Object ref = timestamp_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        timestamp_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string timestamp = 3;</code>
-     */
-    public com.google.protobuf.ByteString
-        getTimestampBytes() {
-      java.lang.Object ref = timestamp_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        timestamp_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string timestamp = 3;</code>
-     */
-    public Builder setTimestamp(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      timestamp_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string timestamp = 3;</code>
-     */
-    public Builder clearTimestamp() {
-      
-      timestamp_ = getDefaultInstance().getTimestamp();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string timestamp = 3;</code>
-     */
-    public Builder setTimestampBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      timestamp_ = value;
       onChanged();
       return this;
     }

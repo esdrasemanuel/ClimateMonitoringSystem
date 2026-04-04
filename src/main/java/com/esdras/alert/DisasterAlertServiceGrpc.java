@@ -59,36 +59,36 @@ public final class DisasterAlertServiceGrpc {
      return getGenerateStormAlertMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.esdras.alert.AlertStreamRequest,
-      com.esdras.alert.AlertResponse> getStreamActiveAlertsMethod;
+  private static volatile io.grpc.MethodDescriptor<com.esdras.alert.LiveAlertRequest,
+      com.esdras.alert.AlertResponse> getStreamLiveAlertsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "streamActiveAlerts",
-      requestType = com.esdras.alert.AlertStreamRequest.class,
+      fullMethodName = SERVICE_NAME + '/' + "streamLiveAlerts",
+      requestType = com.esdras.alert.LiveAlertRequest.class,
       responseType = com.esdras.alert.AlertResponse.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
-  public static io.grpc.MethodDescriptor<com.esdras.alert.AlertStreamRequest,
-      com.esdras.alert.AlertResponse> getStreamActiveAlertsMethod() {
-    io.grpc.MethodDescriptor<com.esdras.alert.AlertStreamRequest, com.esdras.alert.AlertResponse> getStreamActiveAlertsMethod;
-    if ((getStreamActiveAlertsMethod = DisasterAlertServiceGrpc.getStreamActiveAlertsMethod) == null) {
+      methodType = io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
+  public static io.grpc.MethodDescriptor<com.esdras.alert.LiveAlertRequest,
+      com.esdras.alert.AlertResponse> getStreamLiveAlertsMethod() {
+    io.grpc.MethodDescriptor<com.esdras.alert.LiveAlertRequest, com.esdras.alert.AlertResponse> getStreamLiveAlertsMethod;
+    if ((getStreamLiveAlertsMethod = DisasterAlertServiceGrpc.getStreamLiveAlertsMethod) == null) {
       synchronized (DisasterAlertServiceGrpc.class) {
-        if ((getStreamActiveAlertsMethod = DisasterAlertServiceGrpc.getStreamActiveAlertsMethod) == null) {
-          DisasterAlertServiceGrpc.getStreamActiveAlertsMethod = getStreamActiveAlertsMethod = 
-              io.grpc.MethodDescriptor.<com.esdras.alert.AlertStreamRequest, com.esdras.alert.AlertResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+        if ((getStreamLiveAlertsMethod = DisasterAlertServiceGrpc.getStreamLiveAlertsMethod) == null) {
+          DisasterAlertServiceGrpc.getStreamLiveAlertsMethod = getStreamLiveAlertsMethod = 
+              io.grpc.MethodDescriptor.<com.esdras.alert.LiveAlertRequest, com.esdras.alert.AlertResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
               .setFullMethodName(generateFullMethodName(
-                  "alert.DisasterAlertService", "streamActiveAlerts"))
+                  "alert.DisasterAlertService", "streamLiveAlerts"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.esdras.alert.AlertStreamRequest.getDefaultInstance()))
+                  com.esdras.alert.LiveAlertRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.esdras.alert.AlertResponse.getDefaultInstance()))
-                  .setSchemaDescriptor(new DisasterAlertServiceMethodDescriptorSupplier("streamActiveAlerts"))
+                  .setSchemaDescriptor(new DisasterAlertServiceMethodDescriptorSupplier("streamLiveAlerts"))
                   .build();
           }
         }
      }
-     return getStreamActiveAlertsMethod;
+     return getStreamLiveAlertsMethod;
   }
 
   /**
@@ -130,12 +130,12 @@ public final class DisasterAlertServiceGrpc {
 
     /**
      * <pre>
-     * 2. Server Streaming RPC
+     * 2. Bidirectional Streaming RPC
      * </pre>
      */
-    public void streamActiveAlerts(com.esdras.alert.AlertStreamRequest request,
+    public io.grpc.stub.StreamObserver<com.esdras.alert.LiveAlertRequest> streamLiveAlerts(
         io.grpc.stub.StreamObserver<com.esdras.alert.AlertResponse> responseObserver) {
-      asyncUnimplementedUnaryCall(getStreamActiveAlertsMethod(), responseObserver);
+      return asyncUnimplementedStreamingCall(getStreamLiveAlertsMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -148,12 +148,12 @@ public final class DisasterAlertServiceGrpc {
                 com.esdras.alert.AlertResponse>(
                   this, METHODID_GENERATE_STORM_ALERT)))
           .addMethod(
-            getStreamActiveAlertsMethod(),
-            asyncServerStreamingCall(
+            getStreamLiveAlertsMethod(),
+            asyncBidiStreamingCall(
               new MethodHandlers<
-                com.esdras.alert.AlertStreamRequest,
+                com.esdras.alert.LiveAlertRequest,
                 com.esdras.alert.AlertResponse>(
-                  this, METHODID_STREAM_ACTIVE_ALERTS)))
+                  this, METHODID_STREAM_LIVE_ALERTS)))
           .build();
     }
   }
@@ -189,13 +189,13 @@ public final class DisasterAlertServiceGrpc {
 
     /**
      * <pre>
-     * 2. Server Streaming RPC
+     * 2. Bidirectional Streaming RPC
      * </pre>
      */
-    public void streamActiveAlerts(com.esdras.alert.AlertStreamRequest request,
+    public io.grpc.stub.StreamObserver<com.esdras.alert.LiveAlertRequest> streamLiveAlerts(
         io.grpc.stub.StreamObserver<com.esdras.alert.AlertResponse> responseObserver) {
-      asyncServerStreamingCall(
-          getChannel().newCall(getStreamActiveAlertsMethod(), getCallOptions()), request, responseObserver);
+      return asyncBidiStreamingCall(
+          getChannel().newCall(getStreamLiveAlertsMethod(), getCallOptions()), responseObserver);
     }
   }
 
@@ -225,17 +225,6 @@ public final class DisasterAlertServiceGrpc {
     public com.esdras.alert.AlertResponse generateStormAlert(com.esdras.alert.AlertRequest request) {
       return blockingUnaryCall(
           getChannel(), getGenerateStormAlertMethod(), getCallOptions(), request);
-    }
-
-    /**
-     * <pre>
-     * 2. Server Streaming RPC
-     * </pre>
-     */
-    public java.util.Iterator<com.esdras.alert.AlertResponse> streamActiveAlerts(
-        com.esdras.alert.AlertStreamRequest request) {
-      return blockingServerStreamingCall(
-          getChannel(), getStreamActiveAlertsMethod(), getCallOptions(), request);
     }
   }
 
@@ -270,7 +259,7 @@ public final class DisasterAlertServiceGrpc {
   }
 
   private static final int METHODID_GENERATE_STORM_ALERT = 0;
-  private static final int METHODID_STREAM_ACTIVE_ALERTS = 1;
+  private static final int METHODID_STREAM_LIVE_ALERTS = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -293,10 +282,6 @@ public final class DisasterAlertServiceGrpc {
           serviceImpl.generateStormAlert((com.esdras.alert.AlertRequest) request,
               (io.grpc.stub.StreamObserver<com.esdras.alert.AlertResponse>) responseObserver);
           break;
-        case METHODID_STREAM_ACTIVE_ALERTS:
-          serviceImpl.streamActiveAlerts((com.esdras.alert.AlertStreamRequest) request,
-              (io.grpc.stub.StreamObserver<com.esdras.alert.AlertResponse>) responseObserver);
-          break;
         default:
           throw new AssertionError();
       }
@@ -307,6 +292,9 @@ public final class DisasterAlertServiceGrpc {
     public io.grpc.stub.StreamObserver<Req> invoke(
         io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
+        case METHODID_STREAM_LIVE_ALERTS:
+          return (io.grpc.stub.StreamObserver<Req>) serviceImpl.streamLiveAlerts(
+              (io.grpc.stub.StreamObserver<com.esdras.alert.AlertResponse>) responseObserver);
         default:
           throw new AssertionError();
       }
@@ -359,7 +347,7 @@ public final class DisasterAlertServiceGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new DisasterAlertServiceFileDescriptorSupplier())
               .addMethod(getGenerateStormAlertMethod())
-              .addMethod(getStreamActiveAlertsMethod())
+              .addMethod(getStreamLiveAlertsMethod())
               .build();
         }
       }

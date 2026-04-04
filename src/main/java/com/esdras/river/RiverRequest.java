@@ -17,7 +17,6 @@ private static final long serialVersionUID = 0L;
   }
   private RiverRequest() {
     location_ = "";
-    sensorId_ = "";
   }
 
   @java.lang.Override
@@ -48,12 +47,6 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             location_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            sensorId_ = s;
             break;
           }
           default: {
@@ -122,40 +115,6 @@ private static final long serialVersionUID = 0L;
     }
   }
 
-  public static final int SENSORID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object sensorId_;
-  /**
-   * <code>string sensorId = 2;</code>
-   */
-  public java.lang.String getSensorId() {
-    java.lang.Object ref = sensorId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      sensorId_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string sensorId = 2;</code>
-   */
-  public com.google.protobuf.ByteString
-      getSensorIdBytes() {
-    java.lang.Object ref = sensorId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      sensorId_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -173,9 +132,6 @@ private static final long serialVersionUID = 0L;
     if (!getLocationBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, location_);
     }
-    if (!getSensorIdBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sensorId_);
-    }
     unknownFields.writeTo(output);
   }
 
@@ -187,9 +143,6 @@ private static final long serialVersionUID = 0L;
     size = 0;
     if (!getLocationBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, location_);
-    }
-    if (!getSensorIdBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sensorId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -209,8 +162,6 @@ private static final long serialVersionUID = 0L;
     boolean result = true;
     result = result && getLocation()
         .equals(other.getLocation());
-    result = result && getSensorId()
-        .equals(other.getSensorId());
     result = result && unknownFields.equals(other.unknownFields);
     return result;
   }
@@ -224,8 +175,6 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + LOCATION_FIELD_NUMBER;
     hash = (53 * hash) + getLocation().hashCode();
-    hash = (37 * hash) + SENSORID_FIELD_NUMBER;
-    hash = (53 * hash) + getSensorId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -361,8 +310,6 @@ private static final long serialVersionUID = 0L;
       super.clear();
       location_ = "";
 
-      sensorId_ = "";
-
       return this;
     }
 
@@ -390,7 +337,6 @@ private static final long serialVersionUID = 0L;
     public com.esdras.river.RiverRequest buildPartial() {
       com.esdras.river.RiverRequest result = new com.esdras.river.RiverRequest(this);
       result.location_ = location_;
-      result.sensorId_ = sensorId_;
       onBuilt();
       return result;
     }
@@ -441,10 +387,6 @@ private static final long serialVersionUID = 0L;
       if (other == com.esdras.river.RiverRequest.getDefaultInstance()) return this;
       if (!other.getLocation().isEmpty()) {
         location_ = other.location_;
-        onChanged();
-      }
-      if (!other.getSensorId().isEmpty()) {
-        sensorId_ = other.sensorId_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -541,75 +483,6 @@ private static final long serialVersionUID = 0L;
   checkByteStringIsUtf8(value);
       
       location_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object sensorId_ = "";
-    /**
-     * <code>string sensorId = 2;</code>
-     */
-    public java.lang.String getSensorId() {
-      java.lang.Object ref = sensorId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        sensorId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string sensorId = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getSensorIdBytes() {
-      java.lang.Object ref = sensorId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        sensorId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string sensorId = 2;</code>
-     */
-    public Builder setSensorId(
-        java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
-      sensorId_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string sensorId = 2;</code>
-     */
-    public Builder clearSensorId() {
-      
-      sensorId_ = getDefaultInstance().getSensorId();
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string sensorId = 2;</code>
-     */
-    public Builder setSensorIdBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
-      sensorId_ = value;
       onChanged();
       return this;
     }

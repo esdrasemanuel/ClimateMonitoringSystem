@@ -3,8 +3,8 @@
 
 package com.esdras.river;
 
-public interface RainfallDataOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:river.RainfallData)
+public interface RiverRequestBidiOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:river.RiverRequestBidi)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -18,7 +18,7 @@ public interface RainfallDataOrBuilder extends
       getLocationBytes();
 
   /**
-   * <code>double rainfallAmount = 2;</code>
+   * <code>double riverLevel = 2;</code>
    */
-  double getRainfallAmount();
+  double getRiverLevel();
 }

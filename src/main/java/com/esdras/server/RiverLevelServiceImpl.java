@@ -25,7 +25,7 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
     @Override
     public void getCurrentRiverLevel(RiverRequest request, StreamObserver<RiverResponse> responseObserver) {
 
-        double riverLevel = 3 + random.nextDouble() * 1.5; // 3 to 5.0
+        double riverLevel = 1 + random.nextDouble() * 1.5; // 1 to 5.0
         String riskStatus = determineRiskStatus(riverLevel);
 
         RiverResponse response = RiverResponse.newBuilder()
@@ -53,8 +53,7 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
                 totalRainfall += rainfallData.getRainfallAmount();
 
                 System.out.println("Received rainfall from " + rainfallData.getLocation()
-                    + ": " + rainfallData.getRainfallAmount() + " mm at "
-                    + rainfallData.getTimestamp());
+                    + ": " + rainfallData.getRainfallAmount());
             }
 
             @Override
@@ -80,22 +79,19 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
 
     // 3. Bidirectional Streaming RPC
     @Override
-    public StreamObserver<RiverRequest> monitorRiverLevelLive(StreamObserver<RiverResponse> responseObserver) {
+    public StreamObserver<RiverRequestBidi> monitorRiverLevelLive(StreamObserver<RiverResponse> responseObserver) {
 
         ServerCallStreamObserver<RiverResponse> serverObserver =
             (ServerCallStreamObserver<RiverResponse>) responseObserver;
 
-        return new StreamObserver<RiverRequest>() {
-
-            double riverLevel = 3.8; // initial level realisct for simulation
+        return new StreamObserver<RiverRequestBidi>() {
 
             @Override
-            public void onNext(RiverRequest request) {
-                if (!serverObserver.isCancelled()) { // if client still on
+            public void onNext(RiverRequestBidi request) {
+                if (!serverObserver.isCancelled()) { 
 
-                    // small realistic changes
-                    riverLevel += (random.nextDouble() - 0.5) * 0.2;
-                    riverLevel = Math.max(2.5, Math.min(5.5, riverLevel));
+                    // level comes from client (it simules client comunication)
+                    double riverLevel = request.getRiverLevel();
 
                     String riskStatus = determineRiskStatus(riverLevel);
 
@@ -121,12 +117,11 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
             }
         };
     }
-
     // method to determine the risks:
     private String determineRiskStatus(double riverLevel) {
-        if (riverLevel < 3.8) {
+        if (riverLevel < 1.5) {
             return "Low";
-        } else if (riverLevel < 4.5) {
+        } else if (riverLevel < 3.0) {
             return "Moderate";
         } else {
             return "High";
@@ -135,9 +130,9 @@ public class RiverLevelServiceImpl extends RiverLevelServiceGrpc.RiverLevelServi
     
     // method to determine the risks of flood:
     private String determineFloodRisk(double averageRainfall) {
-        if (averageRainfall < 2.0) {
+        if (averageRainfall < 10) {
             return "Low";
-        } else if (averageRainfall < 5.0) {
+        } else if (averageRainfall < 15) {
             return "Medium";
         } else {
             return "High";

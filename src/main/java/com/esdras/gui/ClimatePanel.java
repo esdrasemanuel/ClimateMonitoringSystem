@@ -8,7 +8,6 @@ import com.esdras.client.ClimateClient;
 import com.esdras.climate.ClimateResponse;
 import io.grpc.stub.StreamObserver;
 import javax.swing.SwingUtilities;
-import jdk.internal.org.jline.terminal.TerminalBuilder;
 /**
  *
  * @author EMoreira
@@ -16,6 +15,12 @@ import jdk.internal.org.jline.terminal.TerminalBuilder;
 public class ClimatePanel extends javax.swing.JPanel {
     private ClimateClient climateClient;
     private boolean streaming = false;
+    
+    private ClimateResponse lastClimateResponse;
+    private boolean liveClimateRunning = false;
+    
+    private AlertPanel alertPanel;
+
     /**
      * Creates new form ClimatePanel
      */
@@ -32,6 +37,13 @@ public class ClimatePanel extends javax.swing.JPanel {
         jTextField5.setEditable(false);
         
         jButton3.setVisible(false);
+        
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            javax.swing.BorderFactory.createEtchedBorder(),
+            "CLIMATE DATA",
+            javax.swing.border.TitledBorder.CENTER,
+            javax.swing.border.TitledBorder.TOP
+        ));
     }
 
     /**
@@ -43,7 +55,6 @@ public class ClimatePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
@@ -61,9 +72,6 @@ public class ClimatePanel extends javax.swing.JPanel {
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
         jTextField5 = new javax.swing.JTextField();
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("CLIMATE DATA ");
 
         jLabel2.setText("Location:");
 
@@ -125,51 +133,52 @@ public class ClimatePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(144, 144, 144)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
+                        .addGap(32, 32, 32)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(50, 50, 50)
+                                .addComponent(jTextField5))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
-                                    .addComponent(jLabel2))
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGap(31, 31, 31)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(cbLocation, 0, 112, Short.MAX_VALUE)
-                                    .addComponent(cbStation, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(cbLocation, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(cbStation, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButton2)
                                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(114, 114, 114)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel8))
-                                .addGap(14, 14, 14)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField4)
-                                    .addComponent(jTextField5)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel6))
-                                .addGap(9, 9, 9)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField1)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jTextField3))))))
-                .addGap(0, 49, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel5))
+                                        .addGap(9, 9, 9)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                                            .addComponent(jTextField2))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel7))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(243, 243, 243)
+                                        .addComponent(jLabel6)))
+                                .addGap(12, 12, 12)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                                    .addComponent(jTextField4)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(165, 165, 165)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(cbLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,20 +188,16 @@ public class ClimatePanel extends javax.swing.JPanel {
                     .addComponent(jLabel3)
                     .addComponent(cbStation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -201,7 +206,7 @@ public class ClimatePanel extends javax.swing.JPanel {
                     .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -214,6 +219,10 @@ public class ClimatePanel extends javax.swing.JPanel {
                ClimateResponse response = climateClient.getCurrentClimateData(location, stationId);
 
                updateClimateFields(response);
+               
+                if (alertPanel != null) {
+                    alertPanel.enableStormAlertButton();
+                }
 
            } catch (Exception e) {
                javax.swing.JOptionPane.showMessageDialog(this,
@@ -247,77 +256,103 @@ public class ClimatePanel extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here
-         if (streaming) {
-        return;
-    }
-
-    streaming = true;
-
-    jButton2.setEnabled(false);
-    jButton3.setVisible(true);
-    jButton1.setEnabled(false);
-
-    String location = cbLocation.getSelectedItem().toString();
-    String stationId = cbStation.getSelectedItem().toString();
-
-    climateClient.streamLiveClimateData(location, stationId, new StreamObserver<ClimateResponse>() {
-
-        @Override
-        public void onNext(ClimateResponse response) {
-            SwingUtilities.invokeLater(() -> {
-                updateClimateFields(response);
-            });
+        if (streaming) {
+            return;
         }
 
-        @Override
-        public void onError(Throwable t) {
-            streaming = false;
-            
-            boolean wasCancelledByUser = t instanceof io.grpc.StatusRuntimeException
-                        && ((io.grpc.StatusRuntimeException) t).getStatus().getCode()
-                           == io.grpc.Status.Code.CANCELLED;
-            
-            SwingUtilities.invokeLater(() -> {
-                jButton2.setEnabled(true);
-                jButton3.setVisible(false);
-                jButton1.setEnabled(true);
-                if (!wasCancelledByUser) {
-                    javax.swing.JOptionPane.showMessageDialog(ClimatePanel.this,
-                            "Streaming error:\n" + t.getMessage(),
-                            "Stream Error",
-                            javax.swing.JOptionPane.ERROR_MESSAGE);
-                }
-            });  
-        }
+        streaming = true;
+        
+        liveClimateRunning = true;
 
-        @Override
-        public void onCompleted() {
-            streaming = false;
+        jButton2.setEnabled(false);
+        jButton3.setVisible(true);
+        jButton1.setEnabled(false);
 
-            SwingUtilities.invokeLater(() -> {
-                jButton2.setEnabled(true);
-                jButton3.setVisible(false);
-                jButton1.setEnabled(true);
-            });
-        }
-    });
+        String location = cbLocation.getSelectedItem().toString();
+        String stationId = cbStation.getSelectedItem().toString();
+
+        climateClient.streamLiveClimateData(location, stationId, new StreamObserver<ClimateResponse>() {
+
+            @Override
+            public void onNext(ClimateResponse response) {
+                SwingUtilities.invokeLater(() -> {
+                    updateClimateFields(response);
+                });
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                streaming = false;
+                liveClimateRunning = false;
+
+                boolean wasCancelledByUser = t instanceof io.grpc.StatusRuntimeException
+                            && ((io.grpc.StatusRuntimeException) t).getStatus().getCode()
+                               == io.grpc.Status.Code.CANCELLED;
+
+                SwingUtilities.invokeLater(() -> {
+                    jButton2.setEnabled(true);
+                    jButton3.setVisible(false);
+                    jButton1.setEnabled(true);
+                    if (!wasCancelledByUser) {
+                        javax.swing.JOptionPane.showMessageDialog(ClimatePanel.this,
+                                "Streaming error:\n" + t.getMessage(),
+                                "Stream Error",
+                                javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }
+                });  
+            }
+
+            @Override
+            public void onCompleted() {
+                streaming = false;
+                liveClimateRunning = false;
+
+                SwingUtilities.invokeLater(() -> {
+                    jButton2.setEnabled(true);
+                    jButton3.setVisible(false);
+                    jButton1.setEnabled(true);
+                });
+            }
+        });
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here: 
         climateClient.cancelStream(); // stopping the while loop cleanly.
+        liveClimateRunning = false; // alerts no running
         streaming = false;
         jButton2.setEnabled(true);
         jButton3.setVisible(false);
         jButton1.setEnabled(true);
+        if(alertPanel != null){
+            alertPanel.stopLiveAlertFeed();  
+        }
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void updateClimateFields(ClimateResponse response) {
+        lastClimateResponse = response;
         jTextField1.setText(String.format("%.2f °C", response.getTemperature()));
         jTextField2.setText(String.format("%.2f %%", response.getHumidity()));
         jTextField3.setText(String.format("%.2f hPa", response.getPressure()));
         jTextField4.setText(String.format("%.2f km/h", response.getWindSpeed()));
         jTextField5.setText(response.getTimestamp());
+    }
+    
+    public ClimateResponse getLastClimateResponse() {
+        return lastClimateResponse;
+    }
+    
+    public boolean isLiveClimateRunning() {
+        return liveClimateRunning;
+    }
+
+    public String getSelectedLocation() {
+        return cbLocation.getSelectedItem().toString();
+    }
+    
+    public void setAlertPanel(AlertPanel alertPanel) {
+        this.alertPanel = alertPanel;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -326,7 +361,6 @@ public class ClimatePanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

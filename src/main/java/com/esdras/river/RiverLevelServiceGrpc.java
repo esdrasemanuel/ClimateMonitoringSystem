@@ -91,28 +91,28 @@ public final class RiverLevelServiceGrpc {
      return getUploadRainfallDataMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<com.esdras.river.RiverRequest,
+  private static volatile io.grpc.MethodDescriptor<com.esdras.river.RiverRequestBidi,
       com.esdras.river.RiverResponse> getMonitorRiverLevelLiveMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "monitorRiverLevelLive",
-      requestType = com.esdras.river.RiverRequest.class,
+      requestType = com.esdras.river.RiverRequestBidi.class,
       responseType = com.esdras.river.RiverResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
-  public static io.grpc.MethodDescriptor<com.esdras.river.RiverRequest,
+  public static io.grpc.MethodDescriptor<com.esdras.river.RiverRequestBidi,
       com.esdras.river.RiverResponse> getMonitorRiverLevelLiveMethod() {
-    io.grpc.MethodDescriptor<com.esdras.river.RiverRequest, com.esdras.river.RiverResponse> getMonitorRiverLevelLiveMethod;
+    io.grpc.MethodDescriptor<com.esdras.river.RiverRequestBidi, com.esdras.river.RiverResponse> getMonitorRiverLevelLiveMethod;
     if ((getMonitorRiverLevelLiveMethod = RiverLevelServiceGrpc.getMonitorRiverLevelLiveMethod) == null) {
       synchronized (RiverLevelServiceGrpc.class) {
         if ((getMonitorRiverLevelLiveMethod = RiverLevelServiceGrpc.getMonitorRiverLevelLiveMethod) == null) {
           RiverLevelServiceGrpc.getMonitorRiverLevelLiveMethod = getMonitorRiverLevelLiveMethod = 
-              io.grpc.MethodDescriptor.<com.esdras.river.RiverRequest, com.esdras.river.RiverResponse>newBuilder()
+              io.grpc.MethodDescriptor.<com.esdras.river.RiverRequestBidi, com.esdras.river.RiverResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.BIDI_STREAMING)
               .setFullMethodName(generateFullMethodName(
                   "river.RiverLevelService", "monitorRiverLevelLive"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  com.esdras.river.RiverRequest.getDefaultInstance()))
+                  com.esdras.river.RiverRequestBidi.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   com.esdras.river.RiverResponse.getDefaultInstance()))
                   .setSchemaDescriptor(new RiverLevelServiceMethodDescriptorSupplier("monitorRiverLevelLive"))
@@ -175,7 +175,7 @@ public final class RiverLevelServiceGrpc {
      * 3. Bidirectional Streaming RPC
      * </pre>
      */
-    public io.grpc.stub.StreamObserver<com.esdras.river.RiverRequest> monitorRiverLevelLive(
+    public io.grpc.stub.StreamObserver<com.esdras.river.RiverRequestBidi> monitorRiverLevelLive(
         io.grpc.stub.StreamObserver<com.esdras.river.RiverResponse> responseObserver) {
       return asyncUnimplementedStreamingCall(getMonitorRiverLevelLiveMethod(), responseObserver);
     }
@@ -200,7 +200,7 @@ public final class RiverLevelServiceGrpc {
             getMonitorRiverLevelLiveMethod(),
             asyncBidiStreamingCall(
               new MethodHandlers<
-                com.esdras.river.RiverRequest,
+                com.esdras.river.RiverRequestBidi,
                 com.esdras.river.RiverResponse>(
                   this, METHODID_MONITOR_RIVER_LEVEL_LIVE)))
           .build();
@@ -252,7 +252,7 @@ public final class RiverLevelServiceGrpc {
      * 3. Bidirectional Streaming RPC
      * </pre>
      */
-    public io.grpc.stub.StreamObserver<com.esdras.river.RiverRequest> monitorRiverLevelLive(
+    public io.grpc.stub.StreamObserver<com.esdras.river.RiverRequestBidi> monitorRiverLevelLive(
         io.grpc.stub.StreamObserver<com.esdras.river.RiverResponse> responseObserver) {
       return asyncBidiStreamingCall(
           getChannel().newCall(getMonitorRiverLevelLiveMethod(), getCallOptions()), responseObserver);

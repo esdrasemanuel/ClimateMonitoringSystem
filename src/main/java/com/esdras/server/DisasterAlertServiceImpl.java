@@ -57,37 +57,110 @@ public class DisasterAlertServiceImpl extends DisasterAlertServiceGrpc.DisasterA
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
-
-    // 2. Server streaming
+    
+    // 2. Bidirectional Streaming RPC
     @Override
-    public void streamActiveAlerts(AlertStreamRequest request, StreamObserver<AlertResponse> responseObserver) {
+    public StreamObserver<LiveAlertRequest> streamLiveAlerts(StreamObserver<AlertResponse> responseObserver) {
 
         ServerCallStreamObserver<AlertResponse> serverObserver =
                 (ServerCallStreamObserver<AlertResponse>) responseObserver;
 
-        try {
-            while (!serverObserver.isCancelled()) {
-                
-                // If there is no current alert or the replay has ended it generates a new one (to looks more real).
-                if (currentAlert == null || repetition == 0) {
-                    currentAlert = generateRandomAlert();
-                }
-                responseObserver.onNext(
-                        AlertResponse.newBuilder()
-                            .setAlertType(currentAlert.getAlertType())
-                            .setSeverityLevel(currentAlert.getSeverityLevel())
-                            .setMessage(currentAlert.getMessage())
+        return new StreamObserver<LiveAlertRequest>() {
+
+            @Override
+            public void onNext(LiveAlertRequest request) {
+                if (!serverObserver.isCancelled()) {
+
+                    String alertType = "";
+                    String severityLevel = "";
+                    String message = "";
+
+                    double windSpeed = request.getWindSpeed();
+                    double pressure = request.getPressure();
+                    double humidity = request.getHumidity();
+                    double riverLevel = request.getRiverLevel();
+
+                    // lógica combinando climate + river
+                    if (riverLevel > 4.5 && windSpeed > 35 && pressure < 1000 && humidity > 80) {
+                        alertType = "Severe Flood Storm Alert";
+                        severityLevel = "Very High";
+                        message = "Critical flood and storm conditions detected.";
+                    } else if (riverLevel > 3.5 && humidity > 75 && windSpeed > 25) {
+                        alertType = "Flood Risk Warning";
+                        severityLevel = "High";
+                        message = "River level rising with unstable weather conditions.";
+                    } else if (windSpeed > 35 && pressure < 1000 && humidity > 80) {
+                        alertType = "Storm Warning";
+                        severityLevel = "High";
+                        message = "High probability of severe storm conditions.";
+                    } else if (windSpeed > 25 && humidity > 70) {
+                        alertType = "Heavy Rain Warning";
+                        severityLevel = "Medium";
+                        message = "Potential heavy rainfall and unstable weather conditions.";
+                    } else if (riverLevel > 3.0) {
+                        alertType = "River Level Alert";
+                        severityLevel = "Medium";
+                        message = "River level above normal threshold.";
+                    } else {
+                        alertType = "No Active Alert";
+                        severityLevel = "Low";
+                        message = "No immediate environmental risks detected.";
+                    }
+
+                    AlertResponse response = AlertResponse.newBuilder()
+                            .setAlertType(alertType)
+                            .setSeverityLevel(severityLevel)
+                            .setMessage(message)
                             .setTimestamp(LocalDateTime.now().toString())
-                            .build()
-                );
-                repetition--;
-                
-                Thread.sleep(3000);
+                            .build();
+
+                    responseObserver.onNext(response);
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+            @Override
+            public void onError(Throwable t) {
+                System.out.println("Live alert stream error: " + t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("Live alert monitoring ended.");
+                responseObserver.onCompleted();
+            }
+        };
     }
+
+    // 2. Server streaming
+//    @Override
+//    public void streamActiveAlerts(AlertStreamRequest request, StreamObserver<AlertResponse> responseObserver) {
+//
+//        ServerCallStreamObserver<AlertResponse> serverObserver =
+//                (ServerCallStreamObserver<AlertResponse>) responseObserver;
+//
+//        try {
+//            while (!serverObserver.isCancelled()) {
+//                
+//                // If there is no current alert or the replay has ended it generates a new one (to looks more real).
+//                if (currentAlert == null || repetition == 0) {
+//                    currentAlert = generateRandomAlert();
+//                }
+//                responseObserver.onNext(
+//                        AlertResponse.newBuilder()
+//                            .setAlertType(currentAlert.getAlertType())
+//                            .setSeverityLevel(currentAlert.getSeverityLevel())
+//                            .setMessage(currentAlert.getMessage())
+//                            .setTimestamp(LocalDateTime.now().toString())
+//                            .build()
+//                );
+//                repetition--;
+//                
+//                Thread.sleep(3000);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private AlertResponse generateRandomAlert() {
 

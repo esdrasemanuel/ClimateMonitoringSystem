@@ -4,17 +4,53 @@
  */
 package com.esdras.gui;
 
+import com.esdras.alert.AlertResponse;
+import com.esdras.client.ClimateClient;
+import com.esdras.client.DisasterAlertClient;
+import com.esdras.client.RiverClient;
+import com.esdras.alert.AlertResponse;
+import com.esdras.climate.ClimateResponse;
+import com.esdras.river.RiverResponse;
+import io.grpc.stub.StreamObserver;
+import javax.swing.Timer;
+
 /**
  *
  * @author EMoreira
  */
 public class AlertPanel extends javax.swing.JPanel {
-
+    private DisasterAlertClient alertClient;
+    //private ClimateClient climateClient;
+    //private RiverClient riverClient;
+    private ClimatePanel climatePanel;
+    private RiverPanel riverPanel;
+    private boolean liveAlertRunning = false;
+    private Timer liveAlertTimer;
+    
+    
     /**
      * Creates new form AlertPanel
      */
-    public AlertPanel() {
+    public AlertPanel(ClimatePanel climatePanel, RiverPanel riverPanel) {
         initComponents();
+        alertClient = new DisasterAlertClient();
+       // climateClient = new ClimateClient();
+        //riverClient = new RiverClient();
+        
+        this.climatePanel = climatePanel;
+        this.riverPanel = riverPanel;
+        
+        getStormAlertNow.setEnabled(false);
+        alertTypeOutput.setEditable(false);
+        serverityLevelOutPut.setEditable(false);
+        messageOutput.setEditable(false);
+        
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            javax.swing.BorderFactory.createEtchedBorder(),
+            "DISASTER ALETS",
+            javax.swing.border.TitledBorder.CENTER,
+            javax.swing.border.TitledBorder.TOP
+        ));
     }
 
     /**
@@ -26,19 +62,207 @@ public class AlertPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        getStormAlertNow = new javax.swing.JToggleButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        alertTypeOutput = new javax.swing.JTextField();
+        serverityLevelOutPut = new javax.swing.JTextField();
+        messageOutput = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        liveAlertButton = new javax.swing.JToggleButton();
+
+        getStormAlertNow.setBackground(new java.awt.Color(102, 204, 255));
+        getStormAlertNow.setText("Generate Strom Alert NOW");
+        getStormAlertNow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getStormAlertNowActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Alert Type");
+
+        jLabel2.setText("Severity Level:");
+
+        jLabel3.setText("message:");
+
+        liveAlertButton.setBackground(new java.awt.Color(102, 255, 0));
+        liveAlertButton.setSelected(true);
+        liveAlertButton.setText("Start Live Alert Feed (based on River and Climate live)");
+        liveAlertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                liveAlertButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(alertTypeOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                            .addComponent(serverityLevelOutPut)
+                            .addComponent(messageOutput))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(63, 63, 63)
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(getStormAlertNow, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(liveAlertButton, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(getStormAlertNow)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(liveAlertButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(alertTypeOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(serverityLevelOutPut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(messageOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addContainerGap(58, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void getStormAlertNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getStormAlertNowActionPerformed
+        // TODO add your handling code here:
+        ClimateResponse climateData = climatePanel.getLastClimateResponse();
+
+        if (climateData == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please get current climate data first.",
+                    "No Climate Data",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            String location = climatePanel.getSelectedLocation();
+
+            AlertResponse response = alertClient.generateStormAlert(
+                    location,
+                    climateData.getTemperature(),
+                    climateData.getHumidity(),
+                    climateData.getWindSpeed(),
+                    climateData.getPressure(),
+                    climateData.getTimestamp()
+            );
+
+            alertTypeOutput.setText(response.getAlertType());
+            serverityLevelOutPut.setText(response.getSeverityLevel());
+            messageOutput.setText(response.getMessage());
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error generating storm alert:\n" + e.getMessage(),
+                    "Connection Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_getStormAlertNowActionPerformed
+
+    private void liveAlertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liveAlertButtonActionPerformed
+        // TODO add your handling code here:
+        if (!climatePanel.isLiveClimateRunning() || !riverPanel.isLiveRiverRunning()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please start BOTH Climate and River live streams first.");
+            return;
+        }
+
+        if (liveAlertRunning) {
+            return;
+        }
+
+        liveAlertRunning = true;
+
+        alertClient.startLiveAlertFeed(new StreamObserver<AlertResponse>() {
+            @Override
+            public void onNext(AlertResponse response) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    alertTypeOutput.setText(response.getAlertType());
+                    serverityLevelOutPut.setText(response.getSeverityLevel());
+                    messageOutput.setText(response.getMessage());
+                });
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                liveAlertRunning = false;
+                System.out.println("Live alert error: " + t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                liveAlertRunning = false;
+                System.out.println("Live alert feed ended.");
+            }
+        });
+
+        liveAlertTimer = new Timer(2000, e -> {
+            ClimateResponse climate = climatePanel.getLastClimateResponse();
+            double riverLev = riverPanel.getRiverLevel();
+
+            if (climate != null && riverLev != 0.0) {
+                alertClient.sendLiveAlertData(
+                        climate.getTemperature(),
+                        climate.getHumidity(),
+                        climate.getWindSpeed(),
+                        climate.getPressure(),
+                        riverLev,
+                        climate.getTimestamp()
+                );
+            }
+        });
+
+        liveAlertTimer.start();
+    }//GEN-LAST:event_liveAlertButtonActionPerformed
+    
+    public void stopLiveAlertFeed() {
+        if (liveAlertTimer != null) {
+            liveAlertTimer.stop();
+        }
+
+        alertClient.stopLiveAlertFeed();
+        liveAlertRunning = false;
+    }
+    public void enableStormAlertButton() {
+        getStormAlertNow.setEnabled(true);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField alertTypeOutput;
+    private javax.swing.JToggleButton getStormAlertNow;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JToggleButton liveAlertButton;
+    private javax.swing.JTextField messageOutput;
+    private javax.swing.JTextField serverityLevelOutPut;
     // End of variables declaration//GEN-END:variables
 }

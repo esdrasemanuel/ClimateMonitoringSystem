@@ -5,7 +5,8 @@
 package com.esdras.gui;
 
 import com.esdras.client.RiverClient;
-
+import com.esdras.river.RiverResponse;
+import io.grpc.stub.StreamObserver;
 /**
  *
  * @author EMoreira
@@ -17,10 +18,26 @@ public class RiverPanel extends javax.swing.JPanel {
      */
     
     private RiverClient riverClient;
-    
+    private boolean liveRiverRunning = false;
+    private double riverLevel = 0.0;
+    private AlertPanel alertPanel;
+        
     public RiverPanel() {
         initComponents();
+        ButtonStopLive.setVisible(false);
         riverClient = new RiverClient();
+        
+        riverLevelOutput.setEditable(false);
+        timestampOutput.setEditable(false);
+        floodRiskOutput.setEditable(false);
+        avgRainOutput.setEditable(false);
+        
+        setBorder(javax.swing.BorderFactory.createTitledBorder(
+            javax.swing.BorderFactory.createEtchedBorder(),
+            "RIVER MONITORING",
+            javax.swing.border.TitledBorder.CENTER,
+            javax.swing.border.TitledBorder.TOP
+        ));
     }
 
     /**
@@ -32,7 +49,6 @@ public class RiverPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         CBRiverLocation = new javax.swing.JComboBox<>();
         ButtonGetRiverLevel = new javax.swing.JButton();
@@ -40,7 +56,6 @@ public class RiverPanel extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        numberOfDaysField = new javax.swing.JTextField();
         riverLevelOutput = new javax.swing.JTextField();
         timestampOutput = new javax.swing.JTextField();
         floodRiskOutput = new javax.swing.JTextField();
@@ -48,15 +63,15 @@ public class RiverPanel extends javax.swing.JPanel {
         ButtonCheckRiskAndAvgRain = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         ButtonStartLiveMonitoring = new javax.swing.JToggleButton();
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("RIVER MONITORING");
+        jLabel8 = new javax.swing.JLabel();
+        numberOfDaysField = new javax.swing.JSpinner();
+        ButtonStopLive = new javax.swing.JToggleButton();
 
         jLabel2.setText("River/Location:");
 
         CBRiverLocation.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Lifey - Dublin", "Lee - Cork" }));
 
-        ButtonGetRiverLevel.setBackground(new java.awt.Color(51, 102, 255));
+        ButtonGetRiverLevel.setBackground(new java.awt.Color(102, 204, 255));
         ButtonGetRiverLevel.setText("Get River Level");
         ButtonGetRiverLevel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -71,13 +86,6 @@ public class RiverPanel extends javax.swing.JPanel {
         jLabel5.setText("Flood Risk:");
 
         jLabel6.setText("Timestamp:");
-
-        numberOfDaysField.setText("0");
-        numberOfDaysField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                numberOfDaysFieldActionPerformed(evt);
-            }
-        });
 
         riverLevelOutput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,6 +111,7 @@ public class RiverPanel extends javax.swing.JPanel {
             }
         });
 
+        ButtonCheckRiskAndAvgRain.setBackground(new java.awt.Color(102, 204, 255));
         ButtonCheckRiskAndAvgRain.setText("Check risk and avg");
         ButtonCheckRiskAndAvgRain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -112,7 +121,23 @@ public class RiverPanel extends javax.swing.JPanel {
 
         jLabel7.setText("Rainy Days: ");
 
+        ButtonStartLiveMonitoring.setBackground(new java.awt.Color(102, 255, 0));
         ButtonStartLiveMonitoring.setText("Start Live Monitoring");
+        ButtonStartLiveMonitoring.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonStartLiveMonitoringActionPerformed(evt);
+            }
+        });
+
+        numberOfDaysField.setValue(1);
+
+        ButtonStopLive.setBackground(new java.awt.Color(255, 0, 0));
+        ButtonStopLive.setText("Stop Live Monitoring");
+        ButtonStopLive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonStopLiveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -147,7 +172,18 @@ public class RiverPanel extends javax.swing.JPanel {
                                         .addComponent(timestampOutput)))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGap(2, 2, 2)
+                            .addComponent(numberOfDaysField)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(ButtonCheckRiskAndAvgRain)
+                            .addGap(78, 78, 78))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel7)
+                            .addGap(233, 233, 233)))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(88, 88, 88)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4))
@@ -155,26 +191,20 @@ public class RiverPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(floodRiskOutput)
                             .addComponent(avgRainOutput, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(106, 106, 106))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(numberOfDaysField, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(8, 8, 8)
-                            .addComponent(ButtonCheckRiskAndAvgRain)
-                            .addGap(78, 78, 78))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel7)
-                            .addGap(233, 233, 233)))))
+                        .addGap(106, 106, 106))))
             .addGroup(layout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addComponent(jLabel1)
+                .addContainerGap()
+                .addComponent(jLabel8)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(ButtonStopLive)
+                .addGap(301, 301, 301))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel7))
@@ -182,8 +212,8 @@ public class RiverPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CBRiverLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ButtonGetRiverLevel)
-                    .addComponent(numberOfDaysField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ButtonCheckRiskAndAvgRain))
+                    .addComponent(ButtonCheckRiskAndAvgRain)
+                    .addComponent(numberOfDaysField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButtonStartLiveMonitoring)
                 .addGap(8, 8, 8)
@@ -198,17 +228,33 @@ public class RiverPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4)
                     .addComponent(timestampOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(avgRainOutput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 135, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(ButtonStopLive)
+                .addGap(26, 26, 26)
+                .addComponent(jLabel8)
+                .addGap(0, 88, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonGetRiverLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonGetRiverLevelActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ButtonGetRiverLevelActionPerformed
+        try {
+               String location = CBRiverLocation.getSelectedItem().toString();
 
-    private void numberOfDaysFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numberOfDaysFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_numberOfDaysFieldActionPerformed
+               RiverResponse response = riverClient.getCurrentRiverLevel(location);
+
+                riverLevelOutput.setText(String.format("%.2f level", response.getRiverLevel()));
+                floodRiskOutput.setText(response.getRiskStatus());
+                timestampOutput.setText(response.getTimestamp());
+                avgRainOutput.setText("");
+
+           } catch (Exception e) {
+               javax.swing.JOptionPane.showMessageDialog(this,
+                       "Error connecting:\n" + e.getMessage(),
+                       "Connection Error",
+                       javax.swing.JOptionPane.ERROR_MESSAGE);
+           }
+    }//GEN-LAST:event_ButtonGetRiverLevelActionPerformed
 
     private void timestampOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timestampOutputActionPerformed
         // TODO add your handling code here:
@@ -232,7 +278,7 @@ public class RiverPanel extends javax.swing.JPanel {
         int days;
 
         try {
-            days = Integer.parseInt(numberOfDaysField.getText());
+            days = (Integer) numberOfDaysField.getValue();
         } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Enter a valid number of rainy days.");
             return;
@@ -263,22 +309,79 @@ public class RiverPanel extends javax.swing.JPanel {
         });
     }//GEN-LAST:event_ButtonCheckRiskAndAvgRainActionPerformed
 
+    private void ButtonStartLiveMonitoringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStartLiveMonitoringActionPerformed
+        // TODO add your handling code here:
+        ButtonStartLiveMonitoring.setEnabled(false); 
+        ButtonStopLive.setVisible(true);
+        String location = (String) CBRiverLocation.getSelectedItem();
+        liveRiverRunning = true;
+
+        StreamObserver<RiverResponse> responseObserver = new StreamObserver<RiverResponse>() {
+            @Override
+            public void onNext(RiverResponse response) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    riverLevelOutput.setText(String.format("%.2f metres", response.getRiverLevel()));
+                    floodRiskOutput.setText(response.getRiskStatus());
+                    timestampOutput.setText(response.getTimestamp());
+                    riverLevel = response.getRiverLevel();
+                });
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                liveRiverRunning = false;
+                System.out.println("Error BIDI: " + t.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                liveRiverRunning = false;
+                System.out.println("Live monitoring finished.");
+            }
+        };
+
+        riverClient.startLiveMonitoring(location, responseObserver);
+    }//GEN-LAST:event_ButtonStartLiveMonitoringActionPerformed
+
+    private void ButtonStopLiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStopLiveActionPerformed
+        // TODO add your handling code here:
+        ButtonStartLiveMonitoring.setEnabled(true); 
+        ButtonStopLive.setVisible(false);
+        riverClient.stopLiveMonitoring();
+        liveRiverRunning = false;
+        if(alertPanel != null){
+            alertPanel.stopLiveAlertFeed();  
+        }
+    }//GEN-LAST:event_ButtonStopLiveActionPerformed
+
+    public boolean isLiveRiverRunning() {
+        return liveRiverRunning;
+    }
+    
+    public double getRiverLevel() {
+        return riverLevel;
+    }
+    
+    public void setAlertPanel(AlertPanel alertPanel) {
+        this.alertPanel = alertPanel;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonCheckRiskAndAvgRain;
     private javax.swing.JButton ButtonGetRiverLevel;
     private javax.swing.JToggleButton ButtonStartLiveMonitoring;
+    private javax.swing.JToggleButton ButtonStopLive;
     private javax.swing.JComboBox<String> CBRiverLocation;
     private javax.swing.JTextField avgRainOutput;
     private javax.swing.JTextField floodRiskOutput;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JTextField numberOfDaysField;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JSpinner numberOfDaysField;
     private javax.swing.JTextField riverLevelOutput;
     private javax.swing.JTextField timestampOutput;
     // End of variables declaration//GEN-END:variables

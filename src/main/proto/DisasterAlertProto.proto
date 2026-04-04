@@ -11,8 +11,8 @@ service DisasterAlertService {
   // 1. Simple RPC
   rpc generateStormAlert(AlertRequest) returns (AlertResponse);
 
-  // 2. Server Streaming RPC
-  rpc streamActiveAlerts(AlertStreamRequest) returns (stream AlertResponse);
+  // 2. Bidirectional Streaming RPC
+  rpc streamLiveAlerts(stream LiveAlertRequest) returns (stream AlertResponse);
 }
 
 message AlertRequest {
@@ -22,17 +22,24 @@ message AlertRequest {
   double windSpeed = 4;
   double pressure = 5;
   string timestamp = 6;
-
 }
-
-message AlertStreamRequest {
-  string location = 1;
-}
-
 
 message AlertResponse {
   string alertType = 1;
   string severityLevel = 2;
   string message = 3;
   string timestamp = 4;
+}
+
+message LiveAlertRequest {
+  // climate live
+  double temperature = 1;
+  double humidity = 2;
+  double windSpeed = 3;
+  double pressure = 4;
+
+  // river live
+  double riverLevel = 5;
+
+  string timestamp = 6;
 }
