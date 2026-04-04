@@ -4,6 +4,7 @@
  */
 package com.esdras.server;
 import com.esdras.climate.*;
+import io.grpc.Status;
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import java.time.LocalDateTime;
@@ -23,6 +24,20 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
         
         String location = request.getLocation();
         String stationId = request.getStationId();
+        
+        if (location == null || location.isBlank()) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Location must not be empty.")
+                    .asRuntimeException());
+            return;
+        }
+        
+        if (stationId == null) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Station '" + stationId + "' not found at " + location + ".")
+                    .asRuntimeException());
+            return;
+        }
         
         double baseTemperature = 0.0;
         double baseHumidity = 0.0;
@@ -49,7 +64,7 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
                 baseWindSpeed = 22.0;
             }
         }
-        
+                
         ClimateResponse response = ClimateResponse.newBuilder()
                 .setTemperature(baseTemperature + (-1 + random.nextDouble() * 2))   // ±1°C
                 .setHumidity(baseHumidity + (-3 + random.nextDouble() * 6))         // ±3%
@@ -69,6 +84,20 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
             (ServerCallStreamObserver<ClimateResponse>) responseObserver;
         String location = request.getLocation();
         String stationId = request.getStationId();
+        
+        if (location == null || location.isBlank()) {
+            responseObserver.onError(Status.INVALID_ARGUMENT
+                    .withDescription("Location must not be empty.")
+                    .asRuntimeException());
+            return;
+        }
+        
+        if (stationId == null) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Station '" + stationId + "' not found at " + location + ".")
+                    .asRuntimeException());
+            return;
+        }
 
         double baseTemperature = 0.0;
         double baseHumidity = 0.0;
@@ -122,10 +151,11 @@ public class ClimateSensorServiceImpl extends ClimateSensorServiceGrpc.ClimateSe
 
                 Thread.sleep(2000);
             }
-            System.out.println("Client disconnected.");
+            System.out.println("[ClimateSensor] Client disconnected.");
 
         } catch (InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("[ClimateSensor] Error: " + e.getMessage());
+            responseObserver.onError(Status.INTERNAL.withDescription("Server stream interrupted").asRuntimeException());
         }
 
         responseObserver.onCompleted();

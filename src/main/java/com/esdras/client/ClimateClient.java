@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClimateClient {
 
-private ManagedChannel channel;
+    private ManagedChannel channel;
     private ClimateSensorServiceGrpc.ClimateSensorServiceBlockingStub blockingStub;
     private ClimateSensorServiceGrpc.ClimateSensorServiceStub asyncStub;
     private int portNumber;
