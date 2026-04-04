@@ -8,7 +8,6 @@ import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 
 import java.time.LocalDateTime;
-import java.util.Iterator;
 import java.util.Random;
 /**
  *
@@ -129,77 +128,5 @@ public class DisasterAlertServiceImpl extends DisasterAlertServiceGrpc.DisasterA
                 responseObserver.onCompleted();
             }
         };
-    }
-
-    // 2. Server streaming
-//    @Override
-//    public void streamActiveAlerts(AlertStreamRequest request, StreamObserver<AlertResponse> responseObserver) {
-//
-//        ServerCallStreamObserver<AlertResponse> serverObserver =
-//                (ServerCallStreamObserver<AlertResponse>) responseObserver;
-//
-//        try {
-//            while (!serverObserver.isCancelled()) {
-//                
-//                // If there is no current alert or the replay has ended it generates a new one (to looks more real).
-//                if (currentAlert == null || repetition == 0) {
-//                    currentAlert = generateRandomAlert();
-//                }
-//                responseObserver.onNext(
-//                        AlertResponse.newBuilder()
-//                            .setAlertType(currentAlert.getAlertType())
-//                            .setSeverityLevel(currentAlert.getSeverityLevel())
-//                            .setMessage(currentAlert.getMessage())
-//                            .setTimestamp(LocalDateTime.now().toString())
-//                            .build()
-//                );
-//                repetition--;
-//                
-//                Thread.sleep(3000);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    private AlertResponse generateRandomAlert() {
-
-        String alertType;
-        String severityLevel;
-        String message;
-       
-        int option = random.nextInt(4);
-
-        switch (option) {
-            case 0:
-                alertType = "Storm Warning";
-                severityLevel = "High";
-                message = "Severe storm conditions detected.";
-                break;
-            case 1:
-                alertType = "Heavy Rain Warning";
-                severityLevel = "Medium";
-                message = "Persistent heavy rainfall expected.";
-                break;
-            case 2:
-                alertType = "Heat Alert";
-                severityLevel = "Medium";
-                message = "High temperatures detected in the monitored area.";
-                break;
-            default:
-                alertType = "No Active Alert";
-                severityLevel = "Low";
-                message = "No immediate environmental risks detected.";
-                break;
-        }
-        
-        repetition = 3 + random.nextInt(8);
-
-        return AlertResponse.newBuilder()
-                .setAlertType(alertType)
-                .setSeverityLevel(severityLevel)
-                .setMessage(message)
-                .setTimestamp(LocalDateTime.now().toString())
-                .build();
     }
 }

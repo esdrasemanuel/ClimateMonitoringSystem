@@ -41,8 +41,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="getStormAlertNow" alignment="1" max="32767" attributes="0"/>
-                          <Component id="liveAlertButton" pref="648" max="32767" attributes="0"/>
+                          <Component id="getStormAlertNow" alignment="1" pref="648" max="32767" attributes="0"/>
+                          <Component id="liveAlertButton" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -85,7 +85,7 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="cc" red="66" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Generate Strom Alert NOW"/>
+        <Property name="text" type="java.lang.String" value="Generate Strom Alert NOW (Based on &quot;Get Current Data&quot;)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getStormAlertNowActionPerformed"/>

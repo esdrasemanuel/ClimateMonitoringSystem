@@ -53,12 +53,12 @@ public class ClimateClient {
                 .setStationId(stationId)
                 .build();
 
-        // Wrap the caller's observer so we can intercept beforeStart() and store the call reference
+        // using a observer so we can intercept beforeStart() and store the call reference
         asyncStub.streamLiveClimateData(request, new ClientResponseObserver<ClimateRequest, ClimateResponse>() {
 
             @Override
             public void beforeStart(ClientCallStreamObserver<ClimateRequest> requestStream) {
-                // Save a reference to this specific stream call
+                // Save a reference to this specific stream call / used to stop the server response using the button stop live stream
                 activeStreamObserver = requestStream;
             }
 

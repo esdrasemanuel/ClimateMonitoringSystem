@@ -75,15 +75,6 @@ public class DisasterAlertClient {
         }
     }
 
-//    public void streamActiveAlerts(String location, StreamObserver<AlertResponse> responseObserver) {
-//
-//        AlertStreamRequest request = AlertStreamRequest.newBuilder()
-//                .setLocation(location)
-//                .build();
-//
-//        asyncStub.streamActiveAlerts(request, responseObserver);
-//    }
-
     public void shutdown() {
         channel.shutdown();
     }

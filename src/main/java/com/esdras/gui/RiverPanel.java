@@ -311,7 +311,9 @@ public class RiverPanel extends javax.swing.JPanel {
 
     private void ButtonStartLiveMonitoringActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStartLiveMonitoringActionPerformed
         // TODO add your handling code here:
-        ButtonStartLiveMonitoring.setEnabled(false); 
+        ButtonStartLiveMonitoring.setEnabled(false);
+        ButtonCheckRiskAndAvgRain.setEnabled(false);
+        ButtonGetRiverLevel.setEnabled(false);
         ButtonStopLive.setVisible(true);
         String location = (String) CBRiverLocation.getSelectedItem();
         liveRiverRunning = true;
@@ -330,7 +332,11 @@ public class RiverPanel extends javax.swing.JPanel {
             @Override
             public void onError(Throwable t) {
                 liveRiverRunning = false;
-                System.out.println("Error BIDI: " + t.getMessage());
+                System.out.println("Error: " + t.getMessage());
+                javax.swing.JOptionPane.showMessageDialog(RiverPanel.this,
+                        "Streaming error:\n" + t.getMessage(),
+                        "Stream Error",
+                        javax.swing.JOptionPane.ERROR_MESSAGE); 
             }
 
             @Override
@@ -346,6 +352,8 @@ public class RiverPanel extends javax.swing.JPanel {
     private void ButtonStopLiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStopLiveActionPerformed
         // TODO add your handling code here:
         ButtonStartLiveMonitoring.setEnabled(true); 
+        ButtonCheckRiskAndAvgRain.setEnabled(true);
+        ButtonGetRiverLevel.setEnabled(true);
         ButtonStopLive.setVisible(false);
         riverClient.stopLiveMonitoring();
         liveRiverRunning = false;

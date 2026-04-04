@@ -4,13 +4,10 @@
  */
 package com.esdras.gui;
 
-import com.esdras.alert.AlertResponse;
-import com.esdras.client.ClimateClient;
+
 import com.esdras.client.DisasterAlertClient;
-import com.esdras.client.RiverClient;
 import com.esdras.alert.AlertResponse;
 import com.esdras.climate.ClimateResponse;
-import com.esdras.river.RiverResponse;
 import io.grpc.stub.StreamObserver;
 import javax.swing.Timer;
 
@@ -20,8 +17,6 @@ import javax.swing.Timer;
  */
 public class AlertPanel extends javax.swing.JPanel {
     private DisasterAlertClient alertClient;
-    //private ClimateClient climateClient;
-    //private RiverClient riverClient;
     private ClimatePanel climatePanel;
     private RiverPanel riverPanel;
     private boolean liveAlertRunning = false;
@@ -34,8 +29,6 @@ public class AlertPanel extends javax.swing.JPanel {
     public AlertPanel(ClimatePanel climatePanel, RiverPanel riverPanel) {
         initComponents();
         alertClient = new DisasterAlertClient();
-       // climateClient = new ClimateClient();
-        //riverClient = new RiverClient();
         
         this.climatePanel = climatePanel;
         this.riverPanel = riverPanel;
@@ -47,7 +40,7 @@ public class AlertPanel extends javax.swing.JPanel {
         
         setBorder(javax.swing.BorderFactory.createTitledBorder(
             javax.swing.BorderFactory.createEtchedBorder(),
-            "DISASTER ALETS",
+            "DISASTER ALERTS",
             javax.swing.border.TitledBorder.CENTER,
             javax.swing.border.TitledBorder.TOP
         ));
@@ -73,7 +66,7 @@ public class AlertPanel extends javax.swing.JPanel {
         liveAlertButton = new javax.swing.JToggleButton();
 
         getStormAlertNow.setBackground(new java.awt.Color(102, 204, 255));
-        getStormAlertNow.setText("Generate Strom Alert NOW");
+        getStormAlertNow.setText("Generate Strom Alert NOW (Based on \"Get Current Data\")");
         getStormAlertNow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 getStormAlertNowActionPerformed(evt);
@@ -120,8 +113,8 @@ public class AlertPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(getStormAlertNow, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(liveAlertButton, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE))))
+                            .addComponent(getStormAlertNow, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                            .addComponent(liveAlertButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -214,6 +207,10 @@ public class AlertPanel extends javax.swing.JPanel {
             public void onError(Throwable t) {
                 liveAlertRunning = false;
                 System.out.println("Live alert error: " + t.getMessage());
+                javax.swing.JOptionPane.showMessageDialog(AlertPanel.this,
+                        "Streaming Bidi error:\n" + t.getMessage(),
+                        "Stream Bidi Error",
+                        javax.swing.JOptionPane.ERROR_MESSAGE);                
             }
 
             @Override
