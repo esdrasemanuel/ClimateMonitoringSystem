@@ -10,6 +10,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import javax.jmdns.ServiceInfo;
 /**
  *
@@ -64,7 +65,9 @@ public class DisasterAlertClient {
                 .setTimestamp(timestamp)
                 .build();
 
-        return blockingStub.generateStormAlert(request);
+        return blockingStub
+                .withDeadlineAfter(5, TimeUnit.SECONDS)
+                .generateStormAlert(request);
     }
     
     // Start bidi

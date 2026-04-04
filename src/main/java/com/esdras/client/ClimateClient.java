@@ -13,6 +13,7 @@ import io.grpc.stub.ClientResponseObserver;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import javax.jmdns.ServiceInfo;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -63,7 +64,9 @@ private ManagedChannel channel;
                 .setStationId(stationId)
                 .build();
 
-        return blockingStub.getCurrentClimateData(request);
+        return blockingStub
+                .withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getCurrentClimateData(request);   
     }
 
     // Server Streaming RPC

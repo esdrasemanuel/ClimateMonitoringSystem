@@ -11,6 +11,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import javax.jmdns.ServiceInfo;
 import javax.swing.Timer;
 
@@ -62,7 +63,9 @@ public class RiverClient {
                 .setLocation(location)
                 .build();
 
-        return blockingStub.getCurrentRiverLevel(request);
+        return blockingStub
+                .withDeadlineAfter(5, TimeUnit.SECONDS)
+                .getCurrentRiverLevel(request);
     }
 
     // 2. Client streaming RPC
