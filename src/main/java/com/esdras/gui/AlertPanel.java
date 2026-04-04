@@ -28,7 +28,14 @@ public class AlertPanel extends javax.swing.JPanel {
      */
     public AlertPanel(ClimatePanel climatePanel, RiverPanel riverPanel) {
         initComponents();
-        alertClient = new DisasterAlertClient();
+        try {
+            alertClient = new DisasterAlertClient();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Could not find DisasterAlertService.\nMake sure the server is running first.\n\n" + e.getMessage(),
+                "Service Not Found",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
         
         this.climatePanel = climatePanel;
         this.riverPanel = riverPanel;

@@ -25,7 +25,14 @@ public class RiverPanel extends javax.swing.JPanel {
     public RiverPanel() {
         initComponents();
         ButtonStopLive.setVisible(false);
-        riverClient = new RiverClient();
+        try {
+            riverClient = new RiverClient();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Could not find RiverLevelService.\nMake sure the server is running first.\n\n" + e.getMessage(),
+                "Service Not Found",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
         
         riverLevelOutput.setEditable(false);
         timestampOutput.setEditable(false);

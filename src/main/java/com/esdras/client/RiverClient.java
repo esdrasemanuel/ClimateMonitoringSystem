@@ -3,11 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.esdras.client;
+
 import com.esdras.river.*;
+import com.esdras.naming.ServiceDiscovery;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import java.io.IOException;
 import java.util.Random;
+import javax.jmdns.ServiceInfo;
 import javax.swing.Timer;
 
 /**
@@ -17,20 +21,39 @@ import javax.swing.Timer;
 
 public class RiverClient {
 
-    private final ManagedChannel channel;
-    private final RiverLevelServiceGrpc.RiverLevelServiceBlockingStub blockingStub;
-    private final RiverLevelServiceGrpc.RiverLevelServiceStub asyncStub;
+    private ManagedChannel channel;
+    private RiverLevelServiceGrpc.RiverLevelServiceBlockingStub blockingStub;
+    private RiverLevelServiceGrpc.RiverLevelServiceStub asyncStub;
     private StreamObserver<RiverRequestBidi> liveStreamObserver;
     private Timer timer;
+    private int portNumber;
 
-    public RiverClient() {
+    public RiverClient() throws IOException, InterruptedException {
+        discoverAndConnect();
+    }
+
+    private void discoverAndConnect() throws IOException, InterruptedException {
+        ServiceDiscovery serviceDiscovery = new ServiceDiscovery("_grpc._tcp.local.", "RiverLevelService");
+
+        try {
+            ServiceInfo serviceInfo = serviceDiscovery.discoverService(5000);
+            System.out.print("Discovered service: ");
+            System.out.println("Port number: " + serviceInfo.getPort() + " " + serviceInfo.getName());
+            portNumber = serviceInfo.getPort();
+            serviceDiscovery.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            serviceDiscovery.close();
+            throw new RuntimeException("RiverLevelService not found on the network.");
+        }
+
         channel = ManagedChannelBuilder
-                .forAddress("localhost", 50051)
+                .forAddress("localhost", portNumber)
                 .usePlaintext()
                 .build();
 
         blockingStub = RiverLevelServiceGrpc.newBlockingStub(channel);
-        asyncStub = RiverLevelServiceGrpc.newStub(channel);
+        asyncStub    = RiverLevelServiceGrpc.newStub(channel);
     }
 
     // 1. Simple RPC

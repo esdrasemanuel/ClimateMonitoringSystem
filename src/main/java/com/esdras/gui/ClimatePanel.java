@@ -28,7 +28,14 @@ public class ClimatePanel extends javax.swing.JPanel {
         initComponents();
         
         cbLocationActionPerformed(null);
-        climateClient = new ClimateClient();
+        try {
+            climateClient = new ClimateClient();
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Could not find ClimateSensorService.\nMake sure the server is running first.\n\n" + e.getMessage(),
+                "Service Not Found",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
 
         jTextField1.setEditable(false);
         jTextField2.setEditable(false);

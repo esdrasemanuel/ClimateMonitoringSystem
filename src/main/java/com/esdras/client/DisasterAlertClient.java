@@ -3,10 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.esdras.client;
+
 import com.esdras.alert.*;
+import com.esdras.naming.ServiceDiscovery;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import java.io.IOException;
+import javax.jmdns.ServiceInfo;
 /**
  *
  * @author EMoreira
@@ -14,20 +18,38 @@ import io.grpc.stub.StreamObserver;
 
 public class DisasterAlertClient {
 
-    private final ManagedChannel channel;
-    private final DisasterAlertServiceGrpc.DisasterAlertServiceBlockingStub blockingStub;
-    private final DisasterAlertServiceGrpc.DisasterAlertServiceStub asyncStub;
-    
+    private ManagedChannel channel;
+    private DisasterAlertServiceGrpc.DisasterAlertServiceBlockingStub blockingStub;
+    private DisasterAlertServiceGrpc.DisasterAlertServiceStub asyncStub;
     private StreamObserver<LiveAlertRequest> liveAlertObserver;
+    private int portNumber;
     
-    public DisasterAlertClient() {
+    public DisasterAlertClient() throws IOException, InterruptedException {
+        discoverAndConnect();
+    }
+    
+    private void discoverAndConnect() throws IOException, InterruptedException {
+        ServiceDiscovery serviceDiscovery = new ServiceDiscovery("_grpc._tcp.local.", "DisasterAlertService");
+
+        try {
+            ServiceInfo serviceInfo = serviceDiscovery.discoverService(5000);
+            System.out.print("Discovered service: ");
+            System.out.println("Port number: " + serviceInfo.getPort() + " " + serviceInfo.getName());
+            portNumber = serviceInfo.getPort();
+            serviceDiscovery.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            serviceDiscovery.close();
+            throw new RuntimeException("DisasterAlertService not found on the network.");
+        }
+
         channel = ManagedChannelBuilder
-                .forAddress("localhost", 50051)
+                .forAddress("localhost", portNumber)
                 .usePlaintext()
                 .build();
 
         blockingStub = DisasterAlertServiceGrpc.newBlockingStub(channel);
-        asyncStub = DisasterAlertServiceGrpc.newStub(channel);
+        asyncStub    = DisasterAlertServiceGrpc.newStub(channel);
     }
 
     public AlertResponse generateStormAlert(String location, double temperature, double humidity,
